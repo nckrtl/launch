@@ -4,8 +4,7 @@
     "scripts": {
         "build": "vp build",
         "dev": "vp dev",
-        "prepare": "vp config",
-        "postinstall": "node scripts/patch-inertia-vite.js"
+        "prepare": "vp config"
     },
     "dependencies": {
         "@base-ui/react": "^1.3.0",
