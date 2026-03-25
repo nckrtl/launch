@@ -1,6 +1,6 @@
-import type { InertiaLinkProps } from '@inertiajs/react';
-import type { LucideIcon } from 'lucide-react';
-import type { ReactNode } from 'react';
+import type { InertiaLinkProps } from "@inertiajs/react";
+import type { LucideIcon } from "lucide-react";
+import type { ReactNode } from "react";
 
 export type User = {
     id: number;
@@ -11,12 +11,12 @@ export type User = {
 
 export type BreadcrumbItem = {
     title: string;
-    href: NonNullable<InertiaLinkProps['href']>;
+    href: NonNullable<InertiaLinkProps["href"]>;
 };
 
 export type NavItem = {
     title: string;
-    href: NonNullable<InertiaLinkProps['href']>;
+    href: NonNullable<InertiaLinkProps["href"]>;
     icon?: LucideIcon | null;
     isActive?: boolean;
 };
@@ -26,7 +26,7 @@ export type AppLayoutProps = {
     breadcrumbs?: BreadcrumbItem[];
 };
 
-export type AppVariant = 'header' | 'sidebar';
+export type AppVariant = "header" | "sidebar";
 
 export type AuthLayoutProps = {
     children?: ReactNode;

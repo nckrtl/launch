@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\HomeController::show
-* @see app/Http/Controllers/HomeController.php:12
+* @see app/Http/Controllers/HomeController.php:14
 * @route '/'
 */
 export const show = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\HomeController::show
-* @see app/Http/Controllers/HomeController.php:12
+* @see app/Http/Controllers/HomeController.php:14
 * @route '/'
 */
 show.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ show.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\HomeController::show
-* @see app/Http/Controllers/HomeController.php:12
+* @see app/Http/Controllers/HomeController.php:14
 * @route '/'
 */
 show.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -35,7 +35,7 @@ show.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\HomeController::show
-* @see app/Http/Controllers/HomeController.php:12
+* @see app/Http/Controllers/HomeController.php:14
 * @route '/'
 */
 show.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({

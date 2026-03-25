@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Middleware\GenerateAndSetCspNonce;
 use App\Http\Middleware\HandleInertiaRequests;
+use App\Support\Csp\AddCspHeaders;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -14,6 +16,8 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->web(append: [
             HandleInertiaRequests::class,
+            GenerateAndSetCspNonce::class,
+            AddCspHeaders::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

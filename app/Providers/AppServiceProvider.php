@@ -26,6 +26,8 @@ class AppServiceProvider extends ServiceProvider
         Model::preventAccessingMissingAttributes();
         Model::unguard();
 
-        Vite::prefetch();
+        if (app()->isProduction()) {
+            Vite::prefetch();
+        }
     }
 }

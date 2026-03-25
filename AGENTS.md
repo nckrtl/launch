@@ -20,6 +20,7 @@ Laravel 13 + React 19 + Inertia v3 + Vite 8 + Tailwind CSS v4.2 + Base UI
 ## Component Registry
 
 `components.json` is configured with:
+
 - Style: `base-nova` (Base UI primitives, not Radix)
 - Icon library: `lucide`
 - `@craft` registry at `http://localhost:4100/r/{name}.json` for layout components

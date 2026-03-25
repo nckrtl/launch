@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', [\App\Http\Controllers\HomeController::class, 'show'])->name('HomeController.show');
+Route::get('/', [HomeController::class, 'show'])->name('HomeController.show');

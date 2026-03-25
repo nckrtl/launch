@@ -1,9 +1,9 @@
-import { Link } from '@inertiajs/react';
-import { LayoutGrid } from 'lucide-react';
-import AppLogo from '@/components/app-logo';
-import { NavFooter } from '@/components/nav-footer';
-import { NavMain } from '@/components/nav-main';
-import { NavUser } from '@/components/nav-user';
+import { Link } from "@inertiajs/react";
+import { LayoutGrid } from "lucide-react";
+import AppLogo from "@/components/app-logo";
+import { NavFooter } from "@/components/nav-footer";
+import { NavMain } from "@/components/nav-main";
+import { NavUser } from "@/components/nav-user";
 import {
     Sidebar,
     SidebarContent,
@@ -12,13 +12,13 @@ import {
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
-} from '@/components/ui/sidebar';
-import type { NavItem } from '@/lib/types';
+} from "@/components/ui/sidebar";
+import type { NavItem } from "@/lib/types";
 
 const mainNavItems: NavItem[] = [
     {
-        title: 'Dashboard',
-        href: '/',
+        title: "Dashboard",
+        href: "/",
         icon: LayoutGrid,
     },
 ];
@@ -31,10 +31,8 @@ export function AppSidebar() {
             <SidebarHeader>
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <SidebarMenuButton size="lg" asChild>
-                            <Link href="/" prefetch>
-                                <AppLogo />
-                            </Link>
+                        <SidebarMenuButton size="lg" render={<Link href="/" prefetch />}>
+                            <AppLogo />
                         </SidebarMenuButton>
                     </SidebarMenuItem>
                 </SidebarMenu>

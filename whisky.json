@@ -1,0 +1,13 @@
+{
+    "disabled": [],
+    "hooks": {
+        "pre-commit": [
+            "composer lint",
+            "vp check --fix"
+        ],
+        "pre-push": [
+            "composer test",
+            "composer analyse"
+        ]
+    }
+}
