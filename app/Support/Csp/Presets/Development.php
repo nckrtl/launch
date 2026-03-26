@@ -24,7 +24,6 @@ class Development implements Preset
 
         $policy
             ->add(Directive::CONNECT, [
-                'wss://localhost:*',
                 'wss://'.$appDomain.':*',
                 'https://'.$appDomain.':*',
                 'wss://'.$toolbarDomain.':*',
