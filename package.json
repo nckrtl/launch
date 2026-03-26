@@ -27,6 +27,7 @@
         "@types/node": "^25.5.0",
         "@types/react": "^19.1.0",
         "@types/react-dom": "^19.1.0",
+        "agentation": "^3.0.2",
         "laravel-vite-plugin": "^3.0.0",
         "tailwindcss": "^4.2.1",
         "vite": "npm:@voidzero-dev/vite-plus-core@latest",

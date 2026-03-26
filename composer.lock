@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d89531df3917131261906c225407e51a",
+    "content-hash": "3bc168128c3c2d0476f3f7e826f2daf0",
     "packages": [
         {
             "name": "brick/math",
@@ -9559,17 +9559,11 @@
         },
         {
             "name": "nckrtl/laravel-toolbar",
-            "version": "v0.1.18",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/nckrtl/laravel-toolbar.git",
-                "reference": "f3ea7c4f998e4b6a9eb3c2d7c0221b44d41204f1"
-            },
+            "version": "dev-feature/custom-tools-agentation",
             "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/nckrtl/laravel-toolbar/zipball/f3ea7c4f998e4b6a9eb3c2d7c0221b44d41204f1",
-                "reference": "f3ea7c4f998e4b6a9eb3c2d7c0221b44d41204f1",
-                "shasum": ""
+                "type": "path",
+                "url": "../../../projects/packages/laravel-toolbar",
+                "reference": "bcf24dae26793c69e91b08b1bdb680feacad7eec"
             },
             "require": {
                 "illuminate/contracts": "^11.0||^12.0||^13.0",
@@ -9594,24 +9588,49 @@
             "type": "library",
             "extra": {
                 "laravel": {
-                    "aliases": {
-                        "Toolbar": "NckRtl\\Toolbar\\Facades\\Toolbar"
-                    },
                     "providers": [
                         "NckRtl\\Toolbar\\ToolbarServiceProvider"
-                    ]
+                    ],
+                    "aliases": {
+                        "Toolbar": "NckRtl\\Toolbar\\Facades\\Toolbar"
+                    }
                 }
             },
             "autoload": {
-                "files": [
-                    "src/helpers.php"
-                ],
                 "psr-4": {
                     "NckRtl\\Toolbar\\": "src/",
                     "NckRtl\\Toolbar\\Database\\Factories\\": "database/factories/"
+                },
+                "files": [
+                    "src/helpers.php"
+                ]
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "NckRtl\\Toolbar\\Tests\\": "tests/",
+                    "Workbench\\App\\": "workbench/app/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "scripts": {
+                "post-autoload-dump": [
+                    "@composer run prepare"
+                ],
+                "prepare": [
+                    "@php vendor/bin/testbench package:discover --ansi"
+                ],
+                "analyse": [
+                    "vendor/bin/phpstan analyse"
+                ],
+                "test": [
+                    "vendor/bin/pest"
+                ],
+                "test-coverage": [
+                    "vendor/bin/pest --coverage"
+                ],
+                "format": [
+                    "vendor/bin/pint"
+                ]
+            },
             "license": [
                 "MIT"
             ],
@@ -9630,17 +9649,9 @@
                 "nckrtl",
                 "toolbar"
             ],
-            "support": {
-                "issues": "https://github.com/nckrtl/laravel-toolbar/issues",
-                "source": "https://github.com/nckrtl/laravel-toolbar/tree/v0.1.18"
-            },
-            "funding": [
-                {
-                    "url": "https://github.com/nckrtl",
-                    "type": "github"
-                }
-            ],
-            "time": "2026-03-22T17:59:09+00:00"
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "nunomaduro/collision",
@@ -12386,8 +12397,10 @@
         }
     ],
     "aliases": [],
-    "minimum-stability": "dev",
-    "stability-flags": {},
+    "minimum-stability": "stable",
+    "stability-flags": {
+        "nckrtl/laravel-toolbar": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
