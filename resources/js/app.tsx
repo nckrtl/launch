@@ -13,6 +13,8 @@ createInertiaApp({
             : (import.meta.env.VITE_APP_NAME || "Laravel"),
     layout: (name) => {
         switch (true) {
+            case name === "Home":
+                return null;
             case name.startsWith("auth/"):
                 return AuthLayout;
             case name.startsWith("settings/"):
