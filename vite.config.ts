@@ -1,5 +1,3 @@
 import { defineCraftConfig } from "@hardimpactdev/craft-ui-react/vite";
 
-export default await defineCraftConfig({
-    wayfinder: { formVariants: true },
-});
+export default await defineCraftConfig();
