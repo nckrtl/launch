@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Project Setup Script
  *
@@ -7,17 +9,18 @@
  * - Copies .env.example to .env
  * - Configures APP_NAME, APP_URL, VITE_APP_URL, MAIL_FROM_ADDRESS
  * - Installs Composer and Node dependencies
+ * - Links the sibling Craft Laravel package when available
  * - Generates app key, runs migrations
  * - Sets up Whisky git hooks
  * - Links and secures site with Orbit/Herd
  * - Optionally deletes itself
  */
-
 $setupSteps = [
     'copyEnvFile',
     'updateAppName',
     'updateAppUrl',
     'installComposerDependencies',
+    'linkCraftLaravel',
     'installNodeDependencies',
     'generateAppKey',
     'createDatabase',
@@ -37,12 +40,14 @@ function getLocalDevCli(): ?string
     }
     foreach (['orbit', 'herd'] as $cmd) {
         $out = [];
-        exec('which ' . $cmd . ' 2>/dev/null', $out, $code);
+        exec('which '.$cmd.' 2>/dev/null', $out, $code);
         if ($code === 0 && $out !== []) {
             $cli = $cmd;
+
             return $cli;
         }
     }
+
     return null;
 }
 
@@ -105,7 +110,7 @@ function updateAppName($envContent, $updated)
         $projectName = $defaultAppName;
     }
 
-    $quoted = '"' . str_replace('"', '\"', $projectName) . '"';
+    $quoted = '"'.str_replace('"', '\"', $projectName).'"';
 
     $envContent = preg_replace('/APP_NAME=.*/', "APP_NAME={$quoted}", $envContent, -1, $count);
     if ($count > 0) {
@@ -174,6 +179,28 @@ function installComposerDependencies($envContent, $updated)
     return [$envContent, $updated];
 }
 
+function linkCraftLaravel($envContent, $updated)
+{
+    $path = dirname(getcwd()).'/craft-laravel';
+
+    if (! file_exists($path.'/composer.json')) {
+        echo "Skipping Craft Laravel link (not found at {$path}).\n\n";
+
+        return [$envContent, $updated];
+    }
+
+    echo "Linking Craft Laravel from {$path}...\n";
+    passthru('composer link '.escapeshellarg($path), $returnVar);
+
+    if ($returnVar === 0) {
+        echo "Craft Laravel linked.\n\n";
+    } else {
+        echo "Failed to link Craft Laravel.\n\n";
+    }
+
+    return [$envContent, $updated];
+}
+
 function installNodeDependencies($envContent, $updated)
 {
     echo "Installing Node dependencies with vp...\n";
@@ -235,6 +262,7 @@ function setupWhisky($envContent, $updated)
 {
     if (! file_exists('./vendor/bin/whisky')) {
         echo "Skipping Whisky (not installed).\n\n";
+
         return [$envContent, $updated];
     }
 
@@ -255,12 +283,13 @@ function linkSite($envContent, $updated)
     $cli = getLocalDevCli();
     if ($cli === null) {
         echo "Skipping site link (no Orbit or Herd found).\n\n";
+
         return [$envContent, $updated];
     }
 
     $name = ucfirst($cli);
     echo "Linking site with {$name}...\n";
-    passthru($cli . ' link', $returnVar);
+    passthru($cli.' link', $returnVar);
 
     if ($returnVar === 0) {
         echo "Site linked with {$name}.\n\n";

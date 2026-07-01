@@ -1,6 +1,9 @@
 <?php
 
+use App\Providers\AppServiceProvider;
+use App\Providers\ToolbarConfigProvider;
+
 return [
-    App\Providers\AppServiceProvider::class,
-    App\Providers\ToolbarConfigProvider::class,
+    AppServiceProvider::class,
+    ToolbarConfigProvider::class,
 ];

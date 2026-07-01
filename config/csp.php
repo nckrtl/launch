@@ -1,5 +1,9 @@
 <?php
 
+use App\Support\Csp\LaravelViteNonceGenerator;
+use App\Support\Csp\Presets\Basic;
+use App\Support\Csp\Presets\Development;
+
 return [
 
     /*
@@ -7,8 +11,8 @@ return [
      * any class that implements `Spatie\Csp\Preset`
      */
     'presets' => [
-        \App\Support\Csp\Presets\Basic::class,
-        \App\Support\Csp\Presets\Development::class,
+        Basic::class,
+        Development::class,
     ],
 
     /**
@@ -47,7 +51,7 @@ return [
     /*
      * The class responsible for generating the nonces used in inline tags and headers.
      */
-    'nonce_generator' => App\Support\Csp\LaravelViteNonceGenerator::class,
+    'nonce_generator' => LaravelViteNonceGenerator::class,
 
     /*
      * In local dev, nonces are disabled because Vite injects scripts from :5173

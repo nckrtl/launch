@@ -1,17 +1,19 @@
 # Craft Starterkit React
 
-Laravel 13 + React 19 + Inertia v3 + VitePlus + Tailwind CSS v4.2 + Base UI
+Laravel 13 + Craft Laravel + React 19 + Inertia v3 + VitePlus + Tailwind CSS v4.2 + shadcn
 
 ## Stack
 
-- **Backend**: Laravel 13, PHP 8.4+
+- **Backend**: Laravel 13, Craft Laravel, PHP 8.4+
 - **Frontend**: React 19, TypeScript 5.9
 - **SPA bridge**: Inertia.js v3 with SSR
 - **Styling**: Tailwind CSS v4.2 with `tw-animate-css` and `shadcn/tailwind.css`
-- **UI primitives**: Base UI (`@base-ui/react`) via shadcn base-nova style
+- **Components**: shadcn base-nova components backed by Base UI (`@base-ui/react`)
 - **Icons**: Lucide React
 - **Toolchain**: VitePlus (Vite 8 + Oxc linting/formatting)
 - **Vite config**: `defineCraftConfig()` from `@hardimpactdev/craft-ui-react/vite`
+
+Craft Laravel is expected as a sibling checkout at `../craft-laravel`. Use `composer link ../craft-laravel` after `composer install` so local package changes are used while developing the starter kit.
 
 ## Vite Configuration
 
@@ -98,12 +100,12 @@ function LanguageSwitcher() {
 
 `components.json` configured with:
 
-- Style: `base-nova` (Base UI primitives, not Radix)
+- Style: `base-nova` (shadcn components backed by Base UI primitives, not Radix)
 - Icon library: `lucide`
 - `@craft` registry for layout components
 
 ```bash
-npx shadcn add button dialog         # Base UI components from shadcn
+npx shadcn add button dialog         # shadcn components backed by Base UI primitives
 npx shadcn add @craft/app-sidebar-layout  # Layout from craft registry
 ```
 
@@ -122,7 +124,7 @@ resources/
     app.tsx               # Inertia app entrypoint (minimal)
     actions/              # Wayfinder-generated action helpers
     components/           # App components
-    components/ui/        # shadcn Base UI primitives
+    components/ui/        # shadcn UI components
     hooks/                # React hooks
     lib/                  # Utilities (cn, types)
     pages/                # Inertia page components
@@ -158,7 +160,7 @@ composer fix              # rector + lint + vp check --fix
 ## Conventions
 
 - CSS design tokens live in `resources/css/theme.css`, not scattered across component files
-- UI primitives come from `@base-ui/react`. Do not install `@radix-ui/*` packages
+- Generated shadcn UI components use `@base-ui/react` primitives. Do not install `@radix-ui/*` packages
 - Use Wayfinder-generated imports (`@/actions/...`) for route URLs, never hardcoded strings
 - Use `__()` for user-facing strings when i18n is enabled
 - Page components live in `resources/js/pages/` and are resolved by Inertia automatically
