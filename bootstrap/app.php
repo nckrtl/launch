@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\GenerateAndSetCspNonce;
+use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Support\Csp\AddCspHeaders;
 use Illuminate\Foundation\Application;
@@ -14,7 +15,12 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->encryptCookies(except: [
+            'appearance',
+        ]);
+
         $middleware->web(append: [
+            HandleAppearance::class,
             HandleInertiaRequests::class,
             GenerateAndSetCspNonce::class,
             AddCspHeaders::class,

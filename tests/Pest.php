@@ -4,6 +4,8 @@ use Tests\TestCase;
 
 pest()->extend(TestCase::class)
     ->beforeEach(function () {
+        config(['inertia.ssr.enabled' => false]);
+
         $this->withoutVite();
     })
     ->in('Feature');

@@ -11,7 +11,7 @@ declare(strict_types=1);
  * - Installs Composer and Node dependencies
  * - Links the sibling Craft Laravel package when available
  * - Generates app key, runs migrations
- * - Sets up Whisky git hooks
+ * - Sets up Git config-based hooks
  * - Links and secures site with Orbit/Herd
  * - Optionally deletes itself
  */
@@ -25,7 +25,7 @@ $setupSteps = [
     'generateAppKey',
     'createDatabase',
     'runMigrations',
-    'setupWhisky',
+    'setupGitHooks',
     'linkSite',
     'buildAssets',
     'askDeleteScript',
@@ -258,21 +258,58 @@ function runMigrations($envContent, $updated)
     return [$envContent, $updated];
 }
 
-function setupWhisky($envContent, $updated)
+function setupGitHooks($envContent, $updated)
 {
-    if (! file_exists('./vendor/bin/whisky')) {
-        echo "Skipping Whisky (not installed).\n\n";
+    exec('git --version 2>/dev/null', $output, $code);
+    $version = $output[0] ?? '';
+
+    if ($code !== 0 || ! preg_match('/(\d+)\.(\d+)\.(\d+)/', $version, $matches)) {
+        echo "Skipping Git hooks (Git not found).\n\n";
 
         return [$envContent, $updated];
     }
 
-    echo "Setting up Whisky git hooks...\n";
-    passthru('./vendor/bin/whisky install -n', $returnVar);
+    $major = (int) $matches[1];
+    $minor = (int) $matches[2];
+
+    if ($major < 2 || ($major === 2 && $minor < 54)) {
+        echo "Skipping Git config hooks (Git 2.54+ required, found {$version}).\n\n";
+
+        return [$envContent, $updated];
+    }
+
+    echo "Setting up Git config-based hooks...\n";
+
+    exec('git config --local --get core.hooksPath 2>/dev/null', $hooksPathOutput, $hooksPathReturnVar);
+    if ($hooksPathReturnVar === 0 && ($hooksPathOutput[0] ?? '') === '.vite-hooks/_') {
+        passthru('git config --local --unset core.hooksPath', $unsetHooksPathReturnVar);
+        if ($unsetHooksPathReturnVar === 0) {
+            echo "Removed legacy VitePlus hook path.\n";
+        }
+    }
+
+    $hooks = [
+        ['craft-lint', 'pre-commit', 'composer lint'],
+        ['craft-frontend', 'pre-commit', 'vp check --fix'],
+        ['craft-test', 'pre-push', 'composer test'],
+        ['craft-analyse', 'pre-push', 'composer analyse'],
+    ];
+
+    $returnVar = 0;
+
+    foreach ($hooks as [$name, $event, $command]) {
+        passthru('git config --local --replace-all '.escapeshellarg("hook.{$name}.event").' '.escapeshellarg($event), $eventReturnVar);
+        passthru('git config --local --replace-all '.escapeshellarg("hook.{$name}.command").' '.escapeshellarg($command), $commandReturnVar);
+
+        if ($eventReturnVar !== 0 || $commandReturnVar !== 0) {
+            $returnVar = 1;
+        }
+    }
 
     if ($returnVar === 0) {
-        echo "Whisky hooks installed.\n\n";
+        echo "Git hooks configured.\n\n";
     } else {
-        echo "Failed to set up Whisky.\n\n";
+        echo "Failed to configure Git hooks.\n\n";
     }
 
     return [$envContent, $updated];

@@ -21,6 +21,7 @@
 /storage/pail
 /resources/js/actions
 /resources/js/routes
+/resources/js/wayfinder
 /vendor
 Homestead.json
 Homestead.yaml

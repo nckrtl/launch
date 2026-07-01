@@ -30,13 +30,13 @@ This configures: laravel-vite-plugin, @inertiajs/vite (with SSR), @vitejs/plugin
 
 ```ts
 export default await defineCraftConfig({
-    i18n: true,                              // Enable i18n (see below)
-    i18n: { locale: 'nl', fallbackLocale: 'en' },  // With options
-    react: { babel: { plugins: ['...'] } },  // Pass-through to @vitejs/plugin-react
-    wayfinder: { formVariants: true },        // Pass-through to wayfinder
-    inertia: false,                           // Disable @inertiajs/vite
-    plugins: [myPlugin()],                    // Additional Vite plugins
-    lint: { options: { typeAware: true } },   // VitePlus lint config
+    i18n: true, // Enable i18n (see below)
+    i18n: { locale: "nl", fallbackLocale: "en" }, // With options
+    react: { babel: { plugins: ["..."] } }, // Pass-through to @vitejs/plugin-react
+    wayfinder: { formVariants: true }, // Pass-through to wayfinder
+    inertia: false, // Disable @inertiajs/vite
+    plugins: [myPlugin()], // Additional Vite plugins
+    lint: { options: { typeAware: true } }, // VitePlus lint config
 });
 ```
 
@@ -78,7 +78,7 @@ Supports `:placeholder`, `:Placeholder` (ucfirst), and `:PLACEHOLDER` (uppercase
 import { __, useLocale, setLocale } from "@hardimpactdev/craft-ui-react/i18n";
 
 function LanguageSwitcher() {
-    const locale = useLocale();  // reactive — triggers re-render on change
+    const locale = useLocale(); // reactive — triggers re-render on change
     return (
         <div>
             <button onClick={() => setLocale("en")}>EN</button>
@@ -154,7 +154,7 @@ composer fix              # rector + lint + vp check --fix
 
 - **PHP**: Pest v4, PHPStan level 9, Pint, Rector
 - **JS/TS**: VitePlus (Oxc linting + formatting)
-- **Git hooks**: Whisky — pre-commit (lint + check), pre-push (test + analyse)
+- **Git hooks**: Git config-based hooks — pre-commit (lint + check), pre-push (test + analyse)
 - **CSP**: Spatie laravel-csp with Basic + Development presets
 
 ## Conventions
@@ -165,3 +165,4 @@ composer fix              # rector + lint + vp check --fix
 - Use `__()` for user-facing strings when i18n is enabled
 - Page components live in `resources/js/pages/` and are resolved by Inertia automatically
 - `VITE_APP_URL` in `.env` must match the Orbit domain for HTTPS dev server to work
+- Any change that affects the UI must be verified with the `agent-browser` skill before it is reported as done. Open the app in the browser, inspect the rendered page, and run `agent-browser errors`; completion requires confirming that the visible UI is correct and that browser console errors are resolved.

@@ -15,7 +15,14 @@ vp install
 php artisan key:generate
 touch database/database.sqlite
 php artisan migrate --force
-./vendor/bin/whisky install -n
+git config --local --replace-all hook.craft-lint.event pre-commit
+git config --local --replace-all hook.craft-lint.command "composer lint"
+git config --local --replace-all hook.craft-frontend.event pre-commit
+git config --local --replace-all hook.craft-frontend.command "vp check --fix"
+git config --local --replace-all hook.craft-test.event pre-push
+git config --local --replace-all hook.craft-test.command "composer test"
+git config --local --replace-all hook.craft-analyse.event pre-push
+git config --local --replace-all hook.craft-analyse.command "composer analyse"
 orbit link                    # or: herd link
 vp build
 ```
