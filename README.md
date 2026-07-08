@@ -47,7 +47,7 @@ composer dev    # Starts server, queue, logs, and vite concurrently
 
 ## AI-Assisted Development
 
-This project uses hierarchical `CLAUDE.md` files for AI coding assistants. See the root `CLAUDE.md` for the complete structure and development guidelines.
+This project uses `AGENTS.md` for AI coding assistants. It includes feature completion gates requiring Pest/Pest Browser coverage and `agent-browser` validation for UI-affecting work.
 
 ## License
 

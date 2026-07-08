@@ -153,9 +153,21 @@ composer fix              # rector + lint + vp check --fix
 ## Code Quality
 
 - **PHP**: Pest v4, PHPStan level 9, Pint, Rector
+- **Browser tests**: Pest Browser for user-visible UI workflows in `tests/Browser/`
 - **JS/TS**: VitePlus (Oxc linting + formatting)
 - **Git hooks**: Git config-based hooks — pre-commit (lint + check), pre-push (test + analyse)
 - **CSP**: Spatie laravel-csp with Basic + Development presets
+
+## Feature Completion Gates
+
+Every feature must include automated test coverage before it is reported as done.
+
+- Backend/domain behavior requires focused PHP feature or unit tests.
+- Inertia page responses require Inertia assertions for the expected component and props.
+- Any user-visible UI workflow requires a Pest Browser test in `tests/Browser/`.
+- Any UI-affecting change must also be manually verified in the Codex in-app browser with `agent-browser`, including checking browser console errors.
+- Completion reports must list the exact tests and browser validation that passed.
+- If browser testing or browser validation is skipped, the report must explicitly state why the change has no user-visible UI surface.
 
 ## Conventions
 
@@ -165,4 +177,3 @@ composer fix              # rector + lint + vp check --fix
 - Use `__()` for user-facing strings when i18n is enabled
 - Page components live in `resources/js/pages/` and are resolved by Inertia automatically
 - `VITE_APP_URL` in `.env` must match the Orbit domain for HTTPS dev server to work
-- Any change that affects the UI must be verified with the `agent-browser` skill before it is reported as done. Open the app in the browser, inspect the rendered page, and run `agent-browser errors`; completion requires confirming that the visible UI is correct and that browser console errors are resolved.
