@@ -2,6 +2,7 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 @import "./theme.css";
+@import "./fonts.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -10,3 +11,7 @@
 @source '../**/*.blade.php';
 @source '../**/*.tsx';
 @source '../**/*.ts';
+/* public/ holds build output and published vendor assets; without this guard
+   Tailwind's automatic source detection scans any non-gitignored bundle in
+   there and regenerates a utility for every class it contains. */
+@source not '../../public';

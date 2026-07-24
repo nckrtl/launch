@@ -1,12 +1,14 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" @class(['dark' => ($appearance ?? 'system') === 'dark'])>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" @class(['dark' => ($appearance ?? 'light') === 'dark'])>
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
+        <link rel="preload" href="{{ Vite::asset('resources/fonts/instrument-sans-variable-latin.woff2') }}" as="font" type="font/woff2" crossorigin>
+
         <script nonce="{{ Vite::cspNonce() }}">
             (function() {
-                var appearance = '{{ $appearance ?? "system" }}';
+                var appearance = '{{ $appearance ?? "light" }}';
 
                 if (appearance === 'system') {
                     var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
