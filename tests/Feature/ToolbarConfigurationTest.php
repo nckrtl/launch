@@ -38,7 +38,7 @@ it('uses the breakpoint indicator in the right section instead of Agentation', f
         fn (object $tool): bool => $tool instanceof BreakpointIndicatorTool
     );
 
-    expect($breakpointIndicator->show_pixels)->toBeTrue();
+    expect($breakpointIndicator->show_pixels)->toBeFalse();
 });
 
 it('does not install Agentation as a frontend dependency', function (): void {

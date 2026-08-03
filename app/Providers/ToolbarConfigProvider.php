@@ -40,7 +40,7 @@ class ToolbarConfigProvider extends ServiceProvider
             ->layout(function (LayoutConfig $layout) {
                 $layout->addGroup(
                     (new GroupConfig(priority: 20))
-                        ->addTool(new BreakpointIndicatorTool(show_pixels: true))
+                        ->addTool(new BreakpointIndicatorTool(show_pixels: false))
                         ->section(Section::RIGHT)
                 );
             });
