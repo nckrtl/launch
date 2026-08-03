@@ -291,8 +291,8 @@ function setupGitHooks($envContent, $updated)
     $hooks = [
         ['craft-lint', 'pre-commit', 'composer lint'],
         ['craft-frontend', 'pre-commit', 'vp check --fix'],
-        ['craft-test', 'pre-push', 'composer test'],
-        ['craft-analyse', 'pre-push', 'composer analyse'],
+        ['craft-test', 'pre-push', "sh -c 'composer test' --"],
+        ['craft-analyse', 'pre-push', "sh -c 'composer analyse' --"],
     ];
 
     $returnVar = 0;

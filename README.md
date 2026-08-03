@@ -20,9 +20,9 @@ git config --local --replace-all hook.craft-lint.command "composer lint"
 git config --local --replace-all hook.craft-frontend.event pre-commit
 git config --local --replace-all hook.craft-frontend.command "vp check --fix"
 git config --local --replace-all hook.craft-test.event pre-push
-git config --local --replace-all hook.craft-test.command "composer test"
+git config --local --replace-all hook.craft-test.command "sh -c 'composer test' --"
 git config --local --replace-all hook.craft-analyse.event pre-push
-git config --local --replace-all hook.craft-analyse.command "composer analyse"
+git config --local --replace-all hook.craft-analyse.command "sh -c 'composer analyse' --"
 orbit link                    # or: herd link
 vp build
 ```
