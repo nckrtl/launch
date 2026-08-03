@@ -8,4 +8,5 @@ const craftConfig = await defineCraftConfig({
 export default defineConfig(async (environment) => ({
     ...(await craftConfig(environment)),
     fmt: { ignorePatterns: [".agents/**"] },
+    staged: { "*": "vp check --fix" },
 }));
