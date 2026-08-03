@@ -15,6 +15,35 @@ Laravel 13 + Craft Laravel + React 19 + Inertia v3 + VitePlus + Tailwind CSS v4.
 
 Craft Laravel is expected as a sibling checkout at `../craft-laravel`. Use `composer link ../craft-laravel` after `composer install` so local package changes are used while developing the starter kit.
 
+## Agent Skills
+
+Use the stack-specific skills whenever their domain is involved:
+
+- Laravel PHP: `laravel-best-practices`
+- Pest unit, feature, or browser tests: `pest-testing`
+- Waymaker controller routes: `waymaker-development`
+- Wayfinder frontend route functions: `wayfinder-development`
+- React and Inertia: `vercel-react-best-practices` and
+  `inertia-react-development` together
+- shadcn/Base UI components: `shadcn`
+- Tailwind styling: `tailwindcss-development`
+- VitePlus commands or configuration: `vite-plus`
+
+When React and Inertia guidance overlap:
+
+- Inertia owns page data, navigation, forms, validation errors, deferred and
+  merged props, polling, prefetching, history state, and SSR. Prefer its APIs
+  and Wayfinder-generated actions over client fetch effects or hardcoded URLs.
+- Apply the generic React skill's portable rendering, effects, bundle, and
+  browser-performance guidance. Ignore its Next.js, React Server Component,
+  Server Action, `React.cache`, `after()`, and SWR-specific rules.
+- Do not add dependencies such as SWR or `better-all` solely to follow a generic
+  example. Use Laravel, Inertia, React, and VitePlus-native mechanisms first.
+- SSR is enabled. Keep server and browser renders deterministic, keep browser
+  APIs out of server render paths, and preserve the starter kit's
+  `createInertiaApp()` and VitePlus SSR setup.
+- Use version-specific documentation before applying framework APIs.
+
 ## Vite Configuration
 
 `vite.config.ts` uses `defineCraftConfig()` which bundles all plugins:

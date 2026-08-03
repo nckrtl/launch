@@ -1,3 +1,11 @@
 import { defineCraftConfig } from "@hardimpactdev/craft-ui-react/vite";
+import { defineConfig } from "vite-plus";
 
-export default await defineCraftConfig();
+const craftConfig = await defineCraftConfig({
+    inertia: { ssr: false },
+});
+
+export default defineConfig(async (environment) => ({
+    ...(await craftConfig(environment)),
+    fmt: { ignorePatterns: [".agents/**"] },
+}));
