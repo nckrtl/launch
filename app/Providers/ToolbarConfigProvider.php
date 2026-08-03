@@ -6,7 +6,7 @@ use Illuminate\Support\ServiceProvider;
 use NckRtl\Toolbar\Data\Layout\GroupConfig;
 use NckRtl\Toolbar\Data\Layout\LayoutConfig;
 use NckRtl\Toolbar\Data\ToolbarConfig;
-use NckRtl\Toolbar\Data\Tools\AgentationTool;
+use NckRtl\Toolbar\Data\Tools\BreakpointIndicatorTool;
 use NckRtl\Toolbar\Enums\Layout\Section;
 use NckRtl\Toolbar\Toolbar;
 
@@ -38,7 +38,7 @@ class ToolbarConfigProvider extends ServiceProvider
         $toolbarConfig->layout(function (LayoutConfig $layout) {
             $layout->addGroup(
                 (new GroupConfig(priority: 20))
-                    ->addTool(new AgentationTool)
+                    ->addTool(new BreakpointIndicatorTool(show_pixels: true))
                     ->section(Section::CENTER)
             );
         });

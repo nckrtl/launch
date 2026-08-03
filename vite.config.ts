@@ -2,6 +2,7 @@ import { defineCraftConfig } from "@hardimpactdev/craft-ui-react/vite";
 import { defineConfig } from "vite-plus";
 
 const craftConfig = await defineCraftConfig({
+    agentation: false,
     inertia: { ssr: false },
 });
 
