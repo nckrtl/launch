@@ -18,20 +18,23 @@ it('uses a red primary color with white text', function (): void {
         ->and($toolbarConfig->primaryTextColor)->toBe('#FFFFFF');
 });
 
-it('uses the breakpoint indicator instead of Agentation', function (): void {
+it('uses the breakpoint indicator in the right section instead of Agentation', function (): void {
     $toolbarConfig = new ToolbarConfig;
 
     (new ToolbarConfigProvider($this->app))->update($toolbarConfig);
 
-    $tools = collect($toolbarConfig->layout->sections[Section::CENTER->value])
+    $rightTools = collect($toolbarConfig->layout->sections[Section::RIGHT->value])
+        ->flatMap(fn (GroupConfig $group): array => array_values($group->tools));
+    $tools = collect($toolbarConfig->layout->sections)
+        ->flatten(1)
         ->flatMap(fn (GroupConfig $group): array => array_values($group->tools));
 
-    expect($tools->contains(fn (object $tool): bool => $tool instanceof BreakpointIndicatorTool))
+    expect($rightTools->contains(fn (object $tool): bool => $tool instanceof BreakpointIndicatorTool))
         ->toBeTrue()
         ->and($tools->contains(fn (object $tool): bool => $tool->component() === 'Agentation'))
         ->toBeFalse();
 
-    $breakpointIndicator = $tools->first(
+    $breakpointIndicator = $rightTools->first(
         fn (object $tool): bool => $tool instanceof BreakpointIndicatorTool
     );
 
