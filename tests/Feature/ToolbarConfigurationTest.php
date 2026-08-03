@@ -9,6 +9,15 @@ use NckRtl\Toolbar\Data\ToolbarConfig;
 use NckRtl\Toolbar\Data\Tools\BreakpointIndicatorTool;
 use NckRtl\Toolbar\Enums\Layout\Section;
 
+it('uses a red primary color with white text', function (): void {
+    $toolbarConfig = new ToolbarConfig;
+
+    (new ToolbarConfigProvider($this->app))->update($toolbarConfig);
+
+    expect($toolbarConfig->primaryColor)->toBe('#F53003')
+        ->and($toolbarConfig->primaryTextColor)->toBe('#FFFFFF');
+});
+
 it('uses the breakpoint indicator instead of Agentation', function (): void {
     $toolbarConfig = new ToolbarConfig;
 

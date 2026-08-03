@@ -35,12 +35,14 @@ class ToolbarConfigProvider extends ServiceProvider
 
     public function update(ToolbarConfig $toolbarConfig): void
     {
-        $toolbarConfig->layout(function (LayoutConfig $layout) {
-            $layout->addGroup(
-                (new GroupConfig(priority: 20))
-                    ->addTool(new BreakpointIndicatorTool(show_pixels: true))
-                    ->section(Section::CENTER)
-            );
-        });
+        $toolbarConfig
+            ->primaryColor('#F53003', '#FFFFFF')
+            ->layout(function (LayoutConfig $layout) {
+                $layout->addGroup(
+                    (new GroupConfig(priority: 20))
+                        ->addTool(new BreakpointIndicatorTool(show_pixels: true))
+                        ->section(Section::CENTER)
+                );
+            });
     }
 }
