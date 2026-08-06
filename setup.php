@@ -9,7 +9,7 @@ declare(strict_types=1);
  * - Copies .env.example to .env
  * - Configures APP_NAME, APP_URL, VITE_APP_URL, MAIL_FROM_ADDRESS
  * - Installs Composer and Node dependencies
- * - Links the sibling Craft Laravel package when available
+ * - Links the sibling Launch Laravel package when available
  * - Generates app key, runs migrations
  * - Sets up Git config-based hooks
  * - Links and secures site with Orbit/Herd
@@ -20,7 +20,7 @@ $setupSteps = [
     'updateAppName',
     'updateAppUrl',
     'installComposerDependencies',
-    'linkCraftLaravel',
+    'linkLaunchLaravel',
     'installNodeDependencies',
     'generateAppKey',
     'createDatabase',
@@ -179,23 +179,23 @@ function installComposerDependencies($envContent, $updated)
     return [$envContent, $updated];
 }
 
-function linkCraftLaravel($envContent, $updated)
+function linkLaunchLaravel($envContent, $updated)
 {
-    $path = dirname(getcwd()).'/craft-laravel';
+    $path = dirname(getcwd()).'/launch-laravel';
 
     if (! file_exists($path.'/composer.json')) {
-        echo "Skipping Craft Laravel link (not found at {$path}).\n\n";
+        echo "Skipping Launch Laravel link (not found at {$path}).\n\n";
 
         return [$envContent, $updated];
     }
 
-    echo "Linking Craft Laravel from {$path}...\n";
+    echo "Linking Launch Laravel from {$path}...\n";
     passthru('composer link '.escapeshellarg($path), $returnVar);
 
     if ($returnVar === 0) {
-        echo "Craft Laravel linked.\n\n";
+        echo "Launch Laravel linked.\n\n";
     } else {
-        echo "Failed to link Craft Laravel.\n\n";
+        echo "Failed to link Launch Laravel.\n\n";
     }
 
     return [$envContent, $updated];
@@ -289,10 +289,10 @@ function setupGitHooks($envContent, $updated)
     }
 
     $hooks = [
-        ['craft-lint', 'pre-commit', 'composer lint'],
-        ['craft-frontend', 'pre-commit', 'vp check --fix'],
-        ['craft-test', 'pre-push', "sh -c 'composer test' --"],
-        ['craft-analyse', 'pre-push', "sh -c 'composer analyse' --"],
+        ['launch-lint', 'pre-commit', 'composer lint'],
+        ['launch-frontend', 'pre-commit', 'vp check --fix'],
+        ['launch-test', 'pre-push', "sh -c 'composer test' --"],
+        ['launch-analyse', 'pre-push', "sh -c 'composer analyse' --"],
     ];
 
     $returnVar = 0;

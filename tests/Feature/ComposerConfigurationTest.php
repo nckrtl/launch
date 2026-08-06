@@ -20,9 +20,9 @@ it('isolates configured pre-push commands from Git arguments', function (): void
     $readme = File::get(base_path('README.md'));
 
     expect($setup)
-        ->toContain("['craft-test', 'pre-push', \"sh -c 'composer test' --\"]")
-        ->toContain("['craft-analyse', 'pre-push', \"sh -c 'composer analyse' --\"]")
+        ->toContain("['launch-test', 'pre-push', \"sh -c 'composer test' --\"]")
+        ->toContain("['launch-analyse', 'pre-push', \"sh -c 'composer analyse' --\"]")
         ->and($readme)
-        ->toContain("hook.craft-test.command \"sh -c 'composer test' --\"")
-        ->toContain("hook.craft-analyse.command \"sh -c 'composer analyse' --\"");
+        ->toContain("hook.launch-test.command \"sh -c 'composer test' --\"")
+        ->toContain("hook.launch-analyse.command \"sh -c 'composer analyse' --\"");
 });

@@ -19,6 +19,6 @@
         "hooks": "@/hooks"
     },
     "registries": {
-        "@craft": "http://localhost:4100/r/{name}.json"
+        "@launch": "http://localhost:4100/r/{name}.json"
     }
 }

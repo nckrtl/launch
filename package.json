@@ -8,7 +8,7 @@
     },
     "dependencies": {
         "@base-ui/react": "^1.6.0",
-        "@hardimpactdev/craft-ui-react": "^0.0.21",
+        "@hardimpactdev/launch-ui": "^0.0.1",
         "@inertiajs/react": "3.6.1",
         "@inertiajs/vite": "3.6.1",
         "@laravel/vite-plugin-wayfinder": "^0.1.7",

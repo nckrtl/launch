@@ -1,19 +1,19 @@
 # Craft Starterkit React
 
-Laravel 13 + Craft Laravel + React 19 + Inertia v3 + VitePlus + Tailwind CSS v4.2 + shadcn
+Laravel 13 + Launch Laravel + React 19 + Inertia v3 + VitePlus + Tailwind CSS v4.2 + shadcn
 
 ## Stack
 
-- **Backend**: Laravel 13, Craft Laravel, PHP 8.4+
+- **Backend**: Laravel 13, Launch Laravel, PHP 8.4+
 - **Frontend**: React 19, TypeScript 5.9
 - **SPA bridge**: Inertia.js v3 with SSR
 - **Styling**: Tailwind CSS v4.2 with `tw-animate-css` and `shadcn/tailwind.css`
 - **Components**: shadcn base-nova components backed by Base UI (`@base-ui/react`)
 - **Icons**: Lucide React
 - **Toolchain**: VitePlus (Vite 8 + Oxc linting/formatting)
-- **Vite config**: `defineCraftConfig()` from `@hardimpactdev/craft-ui-react/vite`
+- **Vite config**: `defineLaunchConfig()` from `@hardimpactdev/launch-ui/vite`
 
-Craft Laravel is expected as a sibling checkout at `../craft-laravel`. Use `composer link ../craft-laravel` after `composer install` so local package changes are used while developing the starter kit.
+Launch Laravel is expected as a sibling checkout at `../launch-laravel`. Use `composer link ../launch-laravel` after `composer install` so local package changes are used while developing the starter kit.
 
 ## Agent Skills
 
@@ -46,11 +46,11 @@ When React and Inertia guidance overlap:
 
 ## Vite Configuration
 
-`vite.config.ts` uses `defineCraftConfig()` which bundles all plugins:
+`vite.config.ts` uses `defineLaunchConfig()` which bundles all plugins:
 
 ```ts
-import { defineCraftConfig } from "@hardimpactdev/craft-ui-react/vite";
-export default await defineCraftConfig();
+import { defineLaunchConfig } from "@hardimpactdev/launch-ui/vite";
+export default await defineLaunchConfig();
 ```
 
 This configures: laravel-vite-plugin, @inertiajs/vite (with SSR), @vitejs/plugin-react, @tailwindcss/vite, @laravel/vite-plugin-wayfinder, and artisan runners for waymaker + typescript:transform.
@@ -58,7 +58,7 @@ This configures: laravel-vite-plugin, @inertiajs/vite (with SSR), @vitejs/plugin
 ### Options
 
 ```ts
-export default await defineCraftConfig({
+export default await defineLaunchConfig({
     i18n: true, // Enable i18n (see below)
     i18n: { locale: "nl", fallbackLocale: "en" }, // With options
     react: { babel: { plugins: ["..."] } }, // Pass-through to @vitejs/plugin-react
@@ -74,7 +74,7 @@ export default await defineCraftConfig({
 Enable in `vite.config.ts`:
 
 ```ts
-export default await defineCraftConfig({ i18n: true });
+export default await defineLaunchConfig({ i18n: true });
 ```
 
 This auto-loads translation files from `lang/*.json` and injects `initI18n()` into the app entry point. No providers or wrappers needed.
@@ -92,7 +92,7 @@ lang/
 Use `__()` — a plain function import matching Laravel's Blade `__()` helper:
 
 ```tsx
-import { __ } from "@hardimpactdev/craft-ui-react/i18n";
+import { __ } from "@hardimpactdev/launch-ui/i18n";
 
 function MyComponent() {
     return <p>{__("Hello :name", { name: "Nick" })}</p>;
@@ -104,7 +104,7 @@ Supports `:placeholder`, `:Placeholder` (ucfirst), and `:PLACEHOLDER` (uppercase
 ### Language switching
 
 ```tsx
-import { __, useLocale, setLocale } from "@hardimpactdev/craft-ui-react/i18n";
+import { __, useLocale, setLocale } from "@hardimpactdev/launch-ui/i18n";
 
 function LanguageSwitcher() {
     const locale = useLocale(); // reactive — triggers re-render on change
@@ -131,11 +131,11 @@ function LanguageSwitcher() {
 
 - Style: `base-nova` (shadcn components backed by Base UI primitives, not Radix)
 - Icon library: `lucide`
-- `@craft` registry for layout components
+- `@launch` registry for layout components
 
 ```bash
 npx shadcn add button dialog         # shadcn components backed by Base UI primitives
-npx shadcn add @craft/app-sidebar-layout  # Layout from craft registry
+npx shadcn add @launch/app-sidebar-layout  # Layout from craft registry
 ```
 
 ## Key Directories
