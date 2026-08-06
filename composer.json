@@ -10,7 +10,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.4",
-        "hardimpactdev/launch-laravel": "^0.3",
+        "hardimpactdev/craft-laravel": "^0.3",
         "hardimpactdev/waymaker": "^0.2.3",
         "inertiajs/inertia-laravel": "^3.1.1",
         "laravel/framework": "^13.0",
