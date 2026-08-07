@@ -48,10 +48,11 @@ Composer's lifecycle scripts have already done the following, so do not repeat t
 In particular, do **not** run `cp .env.example .env` now — it would overwrite the `.env` that
 already holds your generated `APP_KEY`.
 
-## 2. Detect the local development environment
+## 2. Detect the environment
 
-This decides the URL the app is served on and how you run it. Detect it now, before writing
-`.env`:
+Two independent questions. Answer both now, before writing `.env`.
+
+### 2a. What serves the app?
 
 ```bash
 command -v orbit >/dev/null 2>&1 && echo "orbit"
@@ -67,7 +68,21 @@ If both print, prefer **orbit**.
 | neither  | Stay on this page. The app runs on `php artisan serve` at `http://localhost:8000`. |
 
 Fetch the addendum before continuing — it changes the URLs you are about to write and the
-command you use to run the app. The rest of this guide is identical either way.
+command you use to run the app.
+
+### 2b. What runs the dev processes?
+
+Check **your own tool list** for tools named `mcp__solo__*`. This is not a shell check; it is
+about what you as an agent can call. The `solo` binary being on `PATH` does not count if you
+have no Solo tools.
+
+| Solo MCP tools available | Do this                                                                |
+| ------------------------ | ---------------------------------------------------------------------- |
+| yes                      | Read <https://launch.nckrtl.com/solo.md> and use it for step 6.        |
+| no                       | Stay on this page and use the backgrounded server described in step 6. |
+
+This is independent of 2a. Orbit + Solo, Herd + Solo, and Solo alone are all valid; so is
+neither. The rest of this guide is identical either way.
 
 ## 3. Configure the environment
 
@@ -109,6 +124,9 @@ git config --local --replace-all hook.launch-analyse.command "sh -c 'composer an
 
 > Using Orbit or Herd? The app is already being served — skip the `php artisan serve` part
 > below and verify against your real URL as described in that addendum.
+>
+> Have Solo MCP tools? Use <https://launch.nckrtl.com/solo.md> instead of the backgrounding
+> below — Solo tracks process lifetime, output, and readiness for you.
 
 First the test suite:
 
@@ -145,15 +163,22 @@ or tell the user to run it themselves.
 
 ## Local environment addenda
 
-If the user develops with one of these, its addendum is required reading, not optional — it
-replaces steps 3 and 6 above:
+Each addendum below is required reading when it applies, not optional. They are independent of
+each other — you may need none, one, or one from each group.
+
+**How the app is served** — replaces steps 3 and 6:
 
 - [Laravel Herd](https://launch.nckrtl.com/herd.md) — Herd serves the app itself; do not run
   `php artisan serve` or `composer dev`.
 - [Orbit](https://launch.nckrtl.com/orbit.md) — Orbit serves the app through a managed
   FrankenPHP process; do not run `php artisan serve` or `composer dev`.
 
-If neither is installed, this page is complete on its own.
+**How dev processes are run** — replaces step 6:
+
+- [Solo](https://launch.nckrtl.com/solo.md) — for agents with the Solo MCP server. The kit
+  ships a `solo.yml`; start processes through Solo rather than backgrounding them in a shell.
+
+If none apply, this page is complete on its own.
 
 ## Alternative: starting from a git clone
 

@@ -1,5 +1,7 @@
 <?php
 
+use Symfony\Component\Yaml\Yaml;
+
 it('serves llms.txt as plain text', function () {
     $this->get('/llms.txt')
         ->assertSuccessful()
@@ -14,7 +16,8 @@ it('points agents from llms.txt to the full setup guide', function () {
 it('lists every local environment addendum in llms.txt', function () {
     expect($this->get('/llms.txt')->getContent())
         ->toContain('https://launch.nckrtl.com/herd.md')
-        ->toContain('https://launch.nckrtl.com/orbit.md');
+        ->toContain('https://launch.nckrtl.com/orbit.md')
+        ->toContain('https://launch.nckrtl.com/solo.md');
 });
 
 it('serves the setup guide as markdown', function () {
@@ -64,7 +67,39 @@ it('serves an addendum per supported environment', function (string $uri, string
 })->with([
     ['/herd.md', 'herd secure'],
     ['/orbit.md', 'orbit instance:register'],
+    ['/solo.md', 'mcp__solo__start_all_commands'],
 ]);
+
+it('tells agents to detect Solo from their tool list, not the shell', function () {
+    expect($this->get('/solo.md')->getContent())
+        ->toContain('mcp__solo__')
+        ->toContain('not a shell check');
+
+    // The serving question and the process-runner question are independent.
+    expect($this->get('/create.md')->getContent())
+        ->toContain('mcp__solo__')
+        ->toContain('independent of 2a');
+});
+
+it('keeps the Solo server process off so it cannot double-serve the app', function () {
+    $solo = Yaml::parseFile(base_path('solo.yml'));
+
+    expect($solo['processes'])->toHaveKeys(['Vite', 'Queue', 'Logs', 'Server'])
+        // Herd and Orbit already serve the app; auto-starting this would bind a
+        // second PHP server on port 8000.
+        ->and($solo['processes']['Server']['auto_start'])->toBeFalse()
+        ->and($solo['processes']['Vite']['auto_start'])->toBeTrue();
+});
+
+it('documents the shipped solo.yml processes accurately', function () {
+    $solo = Yaml::parseFile(base_path('solo.yml'));
+    $doc = $this->get('/solo.md')->getContent();
+
+    foreach ($solo['processes'] as $name => $config) {
+        expect($doc)->toContain($name)
+            ->and($doc)->toContain($config['command']);
+    }
+});
 
 it('tells both environments not to start a second PHP server', function (string $uri) {
     expect($this->get($uri)->getContent())

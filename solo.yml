@@ -1,3 +1,23 @@
 name: launch
 icon: null
-processes: {}
+processes:
+  Vite:
+    command: bun run dev
+    auto_start: true
+    restart_when_changed:
+      - vite.config.ts
+      - package.json
+
+  Queue:
+    command: php artisan queue:listen --tries=1 --timeout=0
+    auto_start: true
+
+  Logs:
+    command: php artisan pail --timeout=0
+    auto_start: true
+
+  # Only needed when nothing else is serving the app. Herd and Orbit both serve
+  # it themselves, so this stays off by default to avoid a second PHP server.
+  Server:
+    command: php artisan serve
+    auto_start: false
