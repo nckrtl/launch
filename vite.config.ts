@@ -4,6 +4,10 @@ import { defineConfig } from "vite-plus";
 const launchConfig = await defineLaunchConfig({
     // Agentation comes from nckrtl/laravel-toolbar-agentation, not the bundle.
     agentation: false,
+    // The SSR port is baked into bootstrap/ssr/app.js at build time and has no env
+    // override, so it has to be pinned here. 13714-13718 are taken on the main1
+    // production node (13717 is toolbar), hence 13719.
+    inertia: { ssr: { port: 13719 } },
 });
 
 export default defineConfig(async (environment) => ({
