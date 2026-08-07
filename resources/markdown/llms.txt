@@ -1,0 +1,14 @@
+# Launch
+
+> A Laravel 13 + React 19 + Inertia v3 starter kit with SSR, Tailwind CSS v4, shadcn (base-nova/Base UI), attribute-based routing, and a typed frontend route layer. Built to be set up and extended by AI coding agents.
+
+If you were pointed at this site to scaffold a new project, read the setup guide below. It is self-contained: follow it top to bottom and you will have a running application.
+
+## Setup
+
+- [Create a new project](https://launch.nckrtl.com/create.md): Complete, non-interactive instructions to create, configure, and run a new Launch project, plus the conventions to follow when building on it.
+
+## Source
+
+- [launch-laravel](https://github.com/nckrtl/launch-laravel): The Laravel package the starter kit depends on.
+- [launch-ui](https://github.com/nckrtl/launch-ui): The `@launch` shadcn registry and Vite config used by the starter kit.

@@ -4,14 +4,22 @@ Laravel 13 + Launch Laravel + React 19 + Inertia v3 + VitePlus + Tailwind CSS v4
 
 ## Getting started
 
-Run `composer setup` for an interactive guided setup, or do it manually:
+```bash
+composer create-project nckrtl/launch-starter-kit my-app
+cd my-app
+composer setup
+```
+
+`composer setup` is an interactive guided setup. AI agents should follow
+[`/create.md`](resources/markdown/create.md) instead, which is the same flow without prompts.
+
+To do it manually:
 
 ```bash
 cp .env.example .env
 # Edit .env: set APP_NAME, APP_URL, VITE_APP_URL (e.g. https://my-app.test)
 composer install
-composer link ../launch-laravel
-vp install
+bun install
 php artisan key:generate
 touch database/database.sqlite
 php artisan migrate --force
@@ -24,8 +32,28 @@ git config --local --replace-all hook.launch-test.command "sh -c 'composer test'
 git config --local --replace-all hook.launch-analyse.event pre-push
 git config --local --replace-all hook.launch-analyse.command "sh -c 'composer analyse' --"
 orbit link                    # or: herd link
-vp build
+bun run build
 ```
+
+## Working on the kit itself
+
+The starter kit depends on `nckrtl/launch-laravel` from Packagist. To develop against a local
+checkout, link it rather than adding a path repository to `composer.json` — path repositories
+resolve only on your machine and break `composer create-project` for everyone else:
+
+```bash
+composer link ../../packages/launch-laravel
+composer link ../../packages/laravel-toolbar-agentation   # optional toolbar addon
+php artisan package:discover
+```
+
+`composer link` keeps `composer.json` and `composer.lock` untouched. Run
+`composer unlink <path>` to go back to the published package.
+
+## Agent-facing docs
+
+`/llms.txt` and `/create.md` are served from `resources/markdown/` by `AgentDocsController`.
+Edit the Markdown files; no rebuild needed.
 
 ## Development
 

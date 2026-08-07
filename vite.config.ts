@@ -2,6 +2,7 @@ import { defineLaunchConfig } from "@hardimpactdev/launch-ui/vite";
 import { defineConfig } from "vite-plus";
 
 const launchConfig = await defineLaunchConfig({
+    // Agentation comes from nckrtl/laravel-toolbar-agentation, not the bundle.
     agentation: false,
     inertia: { ssr: false },
 });

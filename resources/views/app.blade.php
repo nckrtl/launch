@@ -23,12 +23,9 @@
             })();
         </script>
         <style nonce="{{ Vite::cspNonce() }}">
-            html {
-                background-color: oklch(1 0 0);
-            }
-
-            html.dark {
-                background-color: oklch(0.145 0 0);
+            html, body {
+                background-color: #0a0a0a;
+                color: #fafafa;
             }
         </style>
         @viteReactRefresh

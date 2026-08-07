@@ -18,21 +18,16 @@ it('uses a red primary color with white text', function (): void {
         ->and($toolbarConfig->primaryTextColor)->toBe('#FFFFFF');
 });
 
-it('uses the breakpoint indicator in the right section instead of Agentation', function (): void {
+it('uses the breakpoint indicator in the right section', function (): void {
     $toolbarConfig = new ToolbarConfig;
 
     (new ToolbarConfigProvider($this->app))->update($toolbarConfig);
 
     $rightTools = collect($toolbarConfig->layout->sections[Section::RIGHT->value])
         ->flatMap(fn (GroupConfig $group): array => array_values($group->tools));
-    $tools = collect($toolbarConfig->layout->sections)
-        ->flatten(1)
-        ->flatMap(fn (GroupConfig $group): array => array_values($group->tools));
 
     expect($rightTools->contains(fn (object $tool): bool => $tool instanceof BreakpointIndicatorTool))
-        ->toBeTrue()
-        ->and($tools->contains(fn (object $tool): bool => $tool->component() === 'Agentation'))
-        ->toBeFalse();
+        ->toBeTrue();
 
     $breakpointIndicator = $rightTools->first(
         fn (object $tool): bool => $tool instanceof BreakpointIndicatorTool
@@ -41,7 +36,20 @@ it('uses the breakpoint indicator in the right section instead of Agentation', f
     expect($breakpointIndicator->show_pixels)->toBeFalse();
 });
 
-it('does not install Agentation as a frontend dependency', function (): void {
+it('adds Agentation only when the optional addon is installed', function (): void {
+    $toolbarConfig = new ToolbarConfig;
+
+    (new ToolbarConfigProvider($this->app))->update($toolbarConfig);
+
+    $tools = collect($toolbarConfig->layout->sections)
+        ->flatten(1)
+        ->flatMap(fn (GroupConfig $group): array => array_values($group->tools));
+
+    expect($tools->contains(fn (object $tool): bool => $tool->component() === 'Agentation'))
+        ->toBe(ToolbarConfigProvider::agentationAddonInstalled());
+});
+
+it('keeps Agentation out of the frontend build', function (): void {
     $package = json_decode(
         File::get(base_path('package.json')),
         associative: true,
@@ -49,12 +57,27 @@ it('does not install Agentation as a frontend dependency', function (): void {
     );
 
     expect($package['dependencies'] ?? [])->not->toHaveKey('agentation')
-        ->and($package['devDependencies'] ?? [])->not->toHaveKey('agentation');
+        ->and($package['devDependencies'] ?? [])->not->toHaveKey('agentation')
+        ->and(File::get(base_path('vite.config.ts')))->toContain('agentation: false');
 });
 
-it('disables the Agentation Vite integration', function (): void {
-    expect(File::get(base_path('vite.config.ts')))
-        ->toContain('agentation: false');
+it('keeps the composer manifest installable from a public registry', function (): void {
+    $composer = json_decode(
+        File::get(base_path('composer.json')),
+        associative: true,
+        flags: JSON_THROW_ON_ERROR,
+    );
+
+    // Path repositories and @dev constraints resolve only on the maintainer's machine and
+    // would break `composer create-project` for anyone downloading the kit. Local packages
+    // are linked with `composer link` instead.
+    expect($composer)->not->toHaveKey('repositories');
+
+    $constraints = array_merge($composer['require'] ?? [], $composer['require-dev'] ?? []);
+
+    foreach ($constraints as $package => $constraint) {
+        expect($constraint)->not->toContain('@dev', "{$package} must not use a @dev constraint");
+    }
 });
 
 it('exposes Tailwind breakpoints to the toolbar', function (): void {

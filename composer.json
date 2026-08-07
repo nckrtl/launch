@@ -1,16 +1,19 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/laravel",
+    "name": "nckrtl/launch-starter-kit",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
+    "description": "Laravel 13 + React 19 + Inertia v3 starter kit with SSR, Tailwind CSS v4, shadcn on Base UI, and attribute-based routing.",
     "keywords": [
         "laravel",
-        "framework"
+        "starter-kit",
+        "inertia",
+        "react",
+        "tailwindcss"
     ],
     "license": "MIT",
     "require": {
         "php": "^8.4",
-        "hardimpactdev/craft-laravel": "^0.3",
+        "nckrtl/launch-laravel": "^0.3",
         "hardimpactdev/waymaker": "^0.2.3",
         "inertiajs/inertia-laravel": "^3.1.1",
         "laravel/framework": "^13.0",
