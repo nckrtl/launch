@@ -28,6 +28,18 @@ class AgentDocsController extends Controller
         return $this->markdown('create.md', 'text/markdown');
     }
 
+    #[Get(uri: '/herd.md')]
+    public function herd(): Response
+    {
+        return $this->markdown('environments/herd.md', 'text/markdown');
+    }
+
+    #[Get(uri: '/orbit.md')]
+    public function orbit(): Response
+    {
+        return $this->markdown('environments/orbit.md', 'text/markdown');
+    }
+
     private function markdown(string $file, string $contentType): Response
     {
         $path = resource_path('markdown/'.$file);

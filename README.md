@@ -31,9 +31,16 @@ git config --local --replace-all hook.launch-test.event pre-push
 git config --local --replace-all hook.launch-test.command "sh -c 'composer test' --"
 git config --local --replace-all hook.launch-analyse.event pre-push
 git config --local --replace-all hook.launch-analyse.command "sh -c 'composer analyse' --"
-orbit link                    # or: herd link
 bun run build
 ```
+
+Then set the site up for your local environment — Herd and Orbit each need different steps,
+and both serve the app themselves, so neither uses `php artisan serve` or `composer dev`:
+
+- **Herd**: `herd link my-app && herd secure` → see [herd.md](resources/markdown/environments/herd.md)
+- **Orbit**: `orbit instance:register my-app --path="$(pwd)" --root=public` → see [orbit.md](resources/markdown/environments/orbit.md)
+
+Set `APP_URL` and `VITE_APP_URL` to whichever domain that gives you. They must match exactly.
 
 ## Working on the kit itself
 

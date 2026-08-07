@@ -1008,7 +1008,7 @@ export function AgentTerminal({ height = 400 }: { height?: number }) {
                 width: 7,
                 height: 13,
                 marginLeft: 2,
-                verticalAlign: "-2px",
+                verticalAlign: "middle",
                 background: "var(--foreground)",
                 animation: "blink 1.1s steps(1) infinite",
             }}
@@ -1029,6 +1029,7 @@ export function AgentTerminal({ height = 400 }: { height?: number }) {
 
     return (
         <div
+            id="agent-terminal"
             style={{
                 position: "relative",
                 textAlign: "left",

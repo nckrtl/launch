@@ -127,7 +127,20 @@ export function SiteHeader() {
                             <LaunchIcon name="github" size={16} />
                         </Button>
                     )}
-                    <Button size={mob ? "sm" : undefined}>Launch now</Button>
+                    <Button
+                        size={mob ? "sm" : undefined}
+                        onClick={() => {
+                            const el = document.getElementById("agent-terminal");
+                            if (el) el.scrollIntoView({ behavior: "smooth" });
+                            try {
+                                window.location.href = "terminal://";
+                            } catch {
+                                // fallback
+                            }
+                        }}
+                    >
+                        Launch now
+                    </Button>
                     {mob && (
                         <button
                             onClick={() => setOpen((v) => !v)}

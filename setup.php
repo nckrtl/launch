@@ -325,13 +325,26 @@ function linkSite($envContent, $updated)
     }
 
     $name = ucfirst($cli);
-    echo "Linking site with {$name}...\n";
-    passthru($cli.' link', $returnVar);
+    $project = getRootFolderName();
+
+    // Herd links a directory; Orbit adopts it as an instance. Orbit has no `link`
+    // command at all -- calling it prints the help listing and exits 0, which would
+    // read as success here.
+    $command = $cli === 'herd'
+        ? 'herd link '.escapeshellarg($project)
+        : 'orbit instance:register '.escapeshellarg($project)
+            .' --path='.escapeshellarg(getcwd())
+            .' --root=public';
+
+    echo "Registering site with {$name}...\n";
+    echo "  {$command}\n";
+    passthru($command, $returnVar);
 
     if ($returnVar === 0) {
-        echo "Site linked with {$name}.\n\n";
+        echo "Site registered with {$name}.\n";
+        echo "Set APP_URL and VITE_APP_URL to the domain it reported.\n\n";
     } else {
-        echo "Failed to link site with {$name}.\n\n";
+        echo "Failed to register site with {$name}.\n\n";
     }
 
     return [$envContent, $updated];

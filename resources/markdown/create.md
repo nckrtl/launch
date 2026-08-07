@@ -48,7 +48,31 @@ Composer's lifecycle scripts have already done the following, so do not repeat t
 In particular, do **not** run `cp .env.example .env` now — it would overwrite the `.env` that
 already holds your generated `APP_KEY`.
 
-## 2. Configure the environment
+## 2. Detect the local development environment
+
+This decides the URL the app is served on and how you run it. Detect it now, before writing
+`.env`:
+
+```bash
+command -v orbit >/dev/null 2>&1 && echo "orbit"
+command -v herd  >/dev/null 2>&1 && echo "herd"
+```
+
+If both print, prefer **orbit**.
+
+| Detected | Do this                                                                            |
+| -------- | ---------------------------------------------------------------------------------- |
+| `orbit`  | Read <https://launch.nckrtl.com/orbit.md> now and follow it for steps 3 and 6.     |
+| `herd`   | Read <https://launch.nckrtl.com/herd.md> now and follow it for steps 3 and 6.      |
+| neither  | Stay on this page. The app runs on `php artisan serve` at `http://localhost:8000`. |
+
+Fetch the addendum before continuing — it changes the URLs you are about to write and the
+command you use to run the app. The rest of this guide is identical either way.
+
+## 3. Configure the environment
+
+> Using Orbit or Herd? Take these values from that addendum instead — the URL is not
+> `localhost`.
 
 Edit the existing `.env` and set these three values. `VITE_APP_URL` must match `APP_URL`
 exactly, or Vite serves assets from the wrong origin and the page loads unstyled.
@@ -59,22 +83,11 @@ APP_URL=http://localhost:8000
 VITE_APP_URL=http://localhost:8000
 ```
 
-If the user has Orbit or Herd, use the secured domain for both URLs instead, for example
-`https://my-app.test`.
-
-## 3. Install frontend dependencies and build
+## 4. Install frontend dependencies and build
 
 ```bash
 bun install
 bun run build
-```
-
-## 4. Link the site (optional)
-
-Only if Orbit or Herd is installed:
-
-```bash
-orbit link      # or: herd link
 ```
 
 ## 5. Install git hooks (optional but recommended)
@@ -94,19 +107,53 @@ git config --local --replace-all hook.launch-analyse.command "sh -c 'composer an
 
 ## 6. Verify the install
 
+> Using Orbit or Herd? The app is already being served — skip the `php artisan serve` part
+> below and verify against your real URL as described in that addendum.
+
+First the test suite:
+
 ```bash
 composer test
 ```
 
-Then start the dev environment. This runs the PHP server, queue worker, log tailer, and
-Vite together, and does not exit:
+Then confirm the app actually boots and serves its built assets. Start the server in the
+background so this does not block, and check for the built CSS:
+
+```bash
+php artisan serve --port=8000 >/dev/null 2>&1 &
+until curl -s -o /dev/null http://localhost:8000/up; do sleep 1; done
+curl -s http://localhost:8000 | grep -o 'build/assets/app-[A-Za-z0-9_-]*\.css'
+```
+
+A filename means the page is rendering with its compiled stylesheet. **No output means the
+page is unstyled** — almost always because `VITE_APP_URL` does not match `APP_URL`. Stop the
+server when you are done:
+
+```bash
+pkill -f "artisan serve --port=8000"
+```
+
+### Day-to-day development
 
 ```bash
 composer dev
 ```
 
-Load `APP_URL` in a browser. You should see the Launch homepage. If it renders unstyled,
-`VITE_APP_URL` does not match `APP_URL`.
+This runs the PHP server, queue worker, log tailer, and Vite together. **It does not exit.**
+Never run it as a blocking foreground step in an automated flow — start it in the background,
+or tell the user to run it themselves.
+
+## Local environment addenda
+
+If the user develops with one of these, its addendum is required reading, not optional — it
+replaces steps 3 and 6 above:
+
+- [Laravel Herd](https://launch.nckrtl.com/herd.md) — Herd serves the app itself; do not run
+  `php artisan serve` or `composer dev`.
+- [Orbit](https://launch.nckrtl.com/orbit.md) — Orbit serves the app through a managed
+  FrankenPHP process; do not run `php artisan serve` or `composer dev`.
+
+If neither is installed, this page is complete on its own.
 
 ## Alternative: starting from a git clone
 

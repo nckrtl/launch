@@ -7,6 +7,9 @@
         <link rel="icon" type="image/svg+xml" href="/favicon.svg">
         <link rel="icon" type="image/x-icon" href="/favicon.ico">
 
+        {{-- Points AI agents at the setup guide instead of making them parse this page. --}}
+        <link rel="alternate" type="text/markdown" href="/create.md" title="Create a new project with Launch">
+
         <link rel="preload" href="{{ Vite::asset('resources/fonts/instrument-sans-variable-latin.woff2') }}" as="font" type="font/woff2" crossorigin>
 
         <script nonce="{{ Vite::cspNonce() }}">

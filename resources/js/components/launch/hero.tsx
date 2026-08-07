@@ -241,7 +241,19 @@ export function Hero() {
                         marginTop: mob ? 26 : 34,
                     }}
                 >
-                    <Button size="lg" style={{ padding: "0 18px" }}>
+                    <Button
+                        size="lg"
+                        style={{ padding: "0 18px" }}
+                        onClick={() => {
+                            const el = document.getElementById("agent-terminal");
+                            if (el) el.scrollIntoView({ behavior: "smooth" });
+                            try {
+                                window.location.href = "terminal://";
+                            } catch {
+                                // fallback
+                            }
+                        }}
+                    >
                         Launch now <LaunchIcon name="arrow-right" size={15} />
                     </Button>
                     <Button

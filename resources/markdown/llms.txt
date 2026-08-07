@@ -6,7 +6,14 @@ If you were pointed at this site to scaffold a new project, read the setup guide
 
 ## Setup
 
-- [Create a new project](https://launch.nckrtl.com/create.md): Complete, non-interactive instructions to create, configure, and run a new Launch project, plus the conventions to follow when building on it.
+- [Create a new project](https://launch.nckrtl.com/create.md): Complete, non-interactive instructions to create, configure, and run a new Launch project, plus the conventions to follow when building on it. Start here.
+
+## Local development environments
+
+Read the one that matches the machine you are setting up. Both replace the environment and run steps of the main guide.
+
+- [Laravel Herd](https://launch.nckrtl.com/herd.md): Herd serves the app itself, so `php artisan serve` and `composer dev` must not be used.
+- [Orbit](https://launch.nckrtl.com/orbit.md): Orbit serves the app through a managed FrankenPHP process, so `php artisan serve` and `composer dev` must not be used.
 
 ## Source
 
