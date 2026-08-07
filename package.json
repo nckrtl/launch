@@ -8,10 +8,10 @@
     },
     "dependencies": {
         "@base-ui/react": "^1.6.0",
-        "@nckrtl/launch-ui": "^0.0.1",
         "@inertiajs/react": "3.6.1",
         "@inertiajs/vite": "3.6.1",
         "@laravel/vite-plugin-wayfinder": "^0.1.7",
+        "@nckrtl/launch-ui": "^0.0.24",
         "@vitejs/plugin-react": "^6.0.5",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
