@@ -1,5 +1,5 @@
 <?php
 
-use HardImpact\Waymaker\Facades\Waymaker;
+use NckRtl\Waymaker\Facades\Waymaker;
 
 Waymaker::routes();

@@ -1,6 +1,6 @@
 ---
 name: waymaker-development
-description: Use when adding, changing, debugging, testing, or consuming Laravel controller routes defined with HardImpact Waymaker attributes, generated routes/waymaker.php, or related Wayfinder action functions.
+description: Use when adding, changing, debugging, testing, or consuming Laravel controller routes defined with Waymaker attributes, generated routes/waymaker.php, or related Wayfinder action functions.
 license: MIT
 ---
 
@@ -42,8 +42,8 @@ the loaded Laravel routes into typed frontend functions.
 ## Example
 
 ```php
-use HardImpact\Waymaker\Get;
-use HardImpact\Waymaker\Patch;
+use NckRtl\Waymaker\Get;
+use NckRtl\Waymaker\Patch;
 
 class TeamController extends Controller
 {
