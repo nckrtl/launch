@@ -793,7 +793,7 @@ export function AgentTerminal({ height = 400 }: { height?: number }) {
         at((d += 600), () => {
             setHistS((h) => [
                 ...h,
-                { t: "cmd", text: "composer create-project nckrtl/launch-starter-kit ." },
+                { t: "cmd", text: "composer create-project nckrtl/launch-starter-kit my-app" },
             ]);
             setPhS({
                 mode: "select",
