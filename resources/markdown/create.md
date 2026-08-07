@@ -38,14 +38,20 @@ composer create-project nckrtl/launch-starter-kit my-app
 cd my-app
 ```
 
+Composer's lifecycle scripts have already done the following, so do not repeat them:
+
+- created `.env` from `.env.example`
+- installed the PHP dependencies
+- generated `APP_KEY`
+- created `database/database.sqlite` and run the migrations
+
+In particular, do **not** run `cp .env.example .env` now — it would overwrite the `.env` that
+already holds your generated `APP_KEY`.
+
 ## 2. Configure the environment
 
-```bash
-cp .env.example .env
-```
-
-Then set these three values in `.env`. `VITE_APP_URL` must match `APP_URL` exactly, or the
-Vite dev server will serve assets from the wrong origin and the page will load unstyled.
+Edit the existing `.env` and set these three values. `VITE_APP_URL` must match `APP_URL`
+exactly, or Vite serves assets from the wrong origin and the page loads unstyled.
 
 ```dotenv
 APP_NAME="My App"
@@ -56,28 +62,14 @@ VITE_APP_URL=http://localhost:8000
 If the user has Orbit or Herd, use the secured domain for both URLs instead, for example
 `https://my-app.test`.
 
-## 3. Install dependencies
+## 3. Install frontend dependencies and build
 
 ```bash
-composer install
 bun install
-```
-
-## 4. Initialise the application
-
-```bash
-php artisan key:generate
-touch database/database.sqlite
-php artisan migrate --force
-```
-
-## 5. Build assets
-
-```bash
 bun run build
 ```
 
-## 6. Link the site (optional)
+## 4. Link the site (optional)
 
 Only if Orbit or Herd is installed:
 
@@ -85,7 +77,7 @@ Only if Orbit or Herd is installed:
 orbit link      # or: herd link
 ```
 
-## 7. Install git hooks (optional but recommended)
+## 5. Install git hooks (optional but recommended)
 
 The kit uses git config-based hooks rather than a hook manager:
 
@@ -100,7 +92,7 @@ git config --local --replace-all hook.launch-analyse.event pre-push
 git config --local --replace-all hook.launch-analyse.command "sh -c 'composer analyse' --"
 ```
 
-## 8. Verify the install
+## 6. Verify the install
 
 ```bash
 composer test
@@ -115,6 +107,21 @@ composer dev
 
 Load `APP_URL` in a browser. You should see the Launch homepage. If it renders unstyled,
 `VITE_APP_URL` does not match `APP_URL`.
+
+## Alternative: starting from a git clone
+
+`composer create-project` is the supported path. If you clone the repository instead, none of
+the lifecycle scripts run, so do their work by hand before continuing at step 2:
+
+```bash
+git clone https://github.com/nckrtl/launch-starter-kit.git my-app
+cd my-app
+cp .env.example .env
+composer install
+php artisan key:generate
+touch database/database.sqlite
+php artisan migrate --force
+```
 
 ---
 
