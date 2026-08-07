@@ -2,84 +2,110 @@
 
 Addendum to [the main setup guide](https://launch.nckrtl.com/create.md). Read that first.
 
-Solo is **not** an alternative to Herd or Orbit. Those decide how the app is _served_; Solo
-decides how the long-running dev processes are _run and observed_. Combine them freely —
-Orbit + Solo, Herd + Solo, or Solo on its own.
-
-Use this page if you are an agent with the Solo MCP server available. It replaces the
-backgrounded `php artisan serve` and the `composer dev` guidance in the main guide with
-managed processes you can start, inspect, and stop through tool calls.
+Use this page if you are an agent with the Solo MCP server available.
 
 ## 1. Confirm Solo is available
 
 This is not a shell check. Look at your own tool list for tools named `mcp__solo__*` — for
 example `mcp__solo__list_projects` or `mcp__solo__start_all_commands`. If they are there, Solo
-is available to you and this page applies.
+is available to you.
 
 If you have no Solo tools, this page does not apply, even when the `solo` binary exists on
 `PATH`. A CLI you cannot drive does not help you. Go back to the main guide.
 
-## 2. Know what the kit already gives you
+## 2. Check who owns the processes first
 
-The starter kit ships a `solo.yml` in the project root defining four processes:
+**Whatever serves the app owns its long-running processes.** Before defining anything in Solo:
 
-| Process  | Command                                          | Auto-start |
-| -------- | ------------------------------------------------ | ---------- |
-| `Vite`   | `bun run dev`                                    | yes        |
-| `Queue`  | `php artisan queue:listen --tries=1 --timeout=0` | yes        |
-| `Logs`   | `php artisan pail --timeout=0`                   | yes        |
-| `Server` | `php artisan serve`                              | **no**     |
+```bash
+command -v orbit >/dev/null 2>&1 && echo "orbit"
+```
 
-`Server` is deliberately off. Herd and Orbit already serve the app, and starting it would put
-a second PHP server on port 8000. Only enable it when nothing else is serving the project.
+| Result  | Who owns the processes                                                             |
+| ------- | ---------------------------------------------------------------------------------- |
+| `orbit` | **Orbit.** Stop here for process setup — use <https://launch.nckrtl.com/orbit.md>. |
+| nothing | **Solo.** Continue with this page.                                                 |
 
-You do not need to write this file — it is already there. Editing it is how you change the
-process set, since `solo.yml` is the source of truth for YAML-backed commands.
+This is not a style preference. Orbit's runtime units inject `APP_URL`, `VITE_APP_URL`, and
+the `VITE_DEV_SERVER_KEY` / `VITE_DEV_SERVER_CERT` pair that Vite needs to serve assets over
+the Orbit domain. The same `bun run dev` started by Solo gets none of those, so HTTPS asset
+loading breaks and the page renders unstyled. Defining these processes in both places also
+runs each of them twice.
 
-## 3. Register the project
+Solo is still useful alongside Orbit as an agent and terminal surface — spawning agents,
+reading output, scratchpads, todos. Just do not let it define the app's services.
+
+Herd is different: it serves PHP but does not manage arbitrary processes, so Solo owning Vite,
+the queue, and logs under Herd is correct.
+
+## 3. Define the processes
+
+The kit ships a `solo.yml` with `processes: {}` on purpose, because it cannot know whether
+Orbit is present. If you got here, Orbit is not managing this project, so fill it in:
+
+```yaml
+processes:
+    Vite:
+        command: bun run dev
+        auto_start: true
+        restart_when_changed:
+            - vite.config.ts
+            - package.json
+
+    Queue:
+        command: php artisan queue:listen --tries=1 --timeout=0
+        auto_start: true
+
+    Logs:
+        command: php artisan pail --timeout=0
+        auto_start: true
+
+    Server:
+        command: php artisan serve
+        auto_start: false
+```
+
+Leave `Server` on `auto_start: false` and only start it when nothing else serves the app. Under
+Herd, Herd is already serving it — starting this would bind a second PHP server on port 8000.
+
+## 4. Register the project
 
 ```
 mcp__solo__list_projects
 ```
 
-If the project is already listed, select it with `mcp__solo__select_project`. If not, create
-it with `mcp__solo__create_project` pointed at the project root. Solo parses `solo.yml` on
-load and syncs the processes into its local state.
+If the project is listed, select it with `mcp__solo__select_project`. If not, create it with
+`mcp__solo__create_project` pointed at the project root. Solo parses `solo.yml` and syncs the
+processes into its local state.
 
-> **Trust gate:** YAML-defined commands cannot start until they are trusted in the Solo UI,
-> and changing `command`, `working_dir`, `auto_start`, `auto_restart`, `restart_when_changed`,
-> or `env` can require re-review. If a process refuses to start, this is almost always why —
-> tell the user to approve it rather than working around it.
+> **Trust gate:** YAML-defined commands cannot start until they are trusted in the Solo UI, and
+> changing `command`, `working_dir`, `auto_start`, `auto_restart`, `restart_when_changed`, or
+> `env` can require re-review. If a process refuses to start, this is almost always why — tell
+> the user to approve it rather than working around it.
 
-## 4. Start the processes
+## 5. Start the processes
 
 ```
 mcp__solo__start_all_commands
 ```
 
-That starts everything with `auto_start: true`. To bring up just one, use
-`mcp__solo__start_process`.
+That starts everything with `auto_start: true`. Use `mcp__solo__start_process` for one, and
+start `Server` too only if nothing else serves the app.
 
-If nothing else is serving the app — no Herd, no Orbit — also start `Server`:
-
-```
-mcp__solo__start_process   (name: "Server")
-```
-
-## 5. Wait for readiness instead of scraping logs
+## 6. Wait for readiness instead of scraping logs
 
 ```
 mcp__solo__wait_for_bound_port
 ```
 
 This blocks until a process exposes a listening port and returns the URL. It returns
-`ready=false` with `timed_out=true` if nothing came up, which is a real signal — do not treat
-a timeout as success.
+`ready=false` with `timed_out=true` if nothing came up, which is a real signal — do not treat a
+timeout as success.
 
-`mcp__solo__services_list` shows every detected service with its readiness state and URL, and
+`mcp__solo__services_list` shows every detected service with readiness state and URL;
 `mcp__solo__get_process_ports` narrows that to one process.
 
-## 6. Verify and debug
+## 7. Verify and debug
 
 ```
 mcp__solo__get_process_status     — is it running, did it exit
@@ -90,10 +116,10 @@ mcp__solo__search_output          — find an error without pulling the whole lo
 Read `Vite` output if the page loads unstyled; the usual cause is `VITE_APP_URL` not matching
 `APP_URL`, and Vite says so on startup.
 
-## What not to do when you have Solo
+## What not to do
 
-- Do not run `composer dev`. It runs the same four processes under `concurrently` and never
-  exits, so it blocks your turn and gives you no way to inspect them afterwards.
+- Do not define the app's processes in `solo.yml` when Orbit manages the project. See step 2.
+- Do not run `composer dev`. It runs the same processes under `concurrently` and never exits,
+  so it blocks your turn and leaves you no way to inspect them.
 - Do not background processes with `&` and later `pkill` them. Solo already tracks lifetime,
-  output, and ports; shell backgrounding throws all of that away.
-- Do not start `Server` without checking for Herd or Orbit first.
+  output, and ports; shell backgrounding throws that away.

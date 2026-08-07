@@ -75,30 +75,32 @@ it('tells agents to detect Solo from their tool list, not the shell', function (
         ->toContain('mcp__solo__')
         ->toContain('not a shell check');
 
-    // The serving question and the process-runner question are independent.
+    expect($this->get('/create.md')->getContent())->toContain('mcp__solo__');
+});
+
+it('ships solo.yml with no processes so Orbit can own them', function () {
+    $solo = Yaml::parseFile(base_path('solo.yml'));
+
+    // Orbit's runtime units inject VITE_DEV_SERVER_KEY/CERT. Declaring the same
+    // commands here would start them a second time without those variables, so
+    // the kit cannot pre-configure them without knowing whether Orbit is present.
+    expect($solo['processes'])->toBe([]);
+});
+
+it('gives process ownership to Orbit whenever Orbit is present', function () {
+    expect($this->get('/solo.md')->getContent())
+        ->toContain('VITE_DEV_SERVER_KEY')
+        ->toContain('command -v orbit');
+
+    expect($this->get('/orbit.md')->getContent())
+        ->toContain('orbit process:add')
+        ->toContain('VITE_DEV_SERVER_CERT')
+        // Orbit users must not duplicate the same commands in solo.yml.
+        ->toContain('solo.yml');
+
     expect($this->get('/create.md')->getContent())
-        ->toContain('mcp__solo__')
-        ->toContain('independent of 2a');
-});
-
-it('keeps the Solo server process off so it cannot double-serve the app', function () {
-    $solo = Yaml::parseFile(base_path('solo.yml'));
-
-    expect($solo['processes'])->toHaveKeys(['Vite', 'Queue', 'Logs', 'Server'])
-        // Herd and Orbit already serve the app; auto-starting this would bind a
-        // second PHP server on port 8000.
-        ->and($solo['processes']['Server']['auto_start'])->toBeFalse()
-        ->and($solo['processes']['Vite']['auto_start'])->toBeTrue();
-});
-
-it('documents the shipped solo.yml processes accurately', function () {
-    $solo = Yaml::parseFile(base_path('solo.yml'));
-    $doc = $this->get('/solo.md')->getContent();
-
-    foreach ($solo['processes'] as $name => $config) {
-        expect($doc)->toContain($name)
-            ->and($doc)->toContain($config['command']);
-    }
+        ->toContain('orbit process:add')
+        ->toContain('processes: {}');
 });
 
 it('tells both environments not to start a second PHP server', function (string $uri) {

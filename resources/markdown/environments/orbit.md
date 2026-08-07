@@ -47,14 +47,35 @@ VITE_APP_URL=https://my-app.nmbp
 A mismatch makes Vite serve assets from the wrong origin and the page loads unstyled. This is
 the single most common Orbit setup failure with this kit.
 
-## 4. Run only Vite
+## 4. Register the long-running processes with Orbit
+
+Orbit owns this project's processes. Register Vite and the queue worker as Orbit processes
+rather than starting them by hand, in Solo, or through `composer dev`:
 
 ```bash
-bun run dev
+orbit process:add vite 'bun run dev' \
+  --instance=my-app.development --restart-policy=on_failure
+
+orbit process:add queue 'php artisan queue:work --tries=3' \
+  --instance=my-app.development --restart-policy=always
 ```
 
-Orbit runs PHP for you. If you want the queue worker and log tailer as well, either start them
-by hand or register them as Orbit processes with `orbit process:add`.
+This matters for more than tidiness. Orbit's runtime units inject `APP_URL`, `VITE_APP_URL`,
+`VITE_VALET_HOST`, `VITE_DEV_SERVER_KEY`, and `VITE_DEV_SERVER_CERT`. Vite needs that key and
+certificate to serve assets over the HTTPS Orbit domain — the same `bun run dev` started
+outside Orbit does not get them, so assets fail to load and the page renders unstyled.
+
+If the agent also has the Solo MCP server, **do not** define these commands in `solo.yml`.
+They would run a second time without Orbit's environment. Solo remains useful alongside Orbit
+as an agent and terminal surface; it just does not own the app's services here.
+
+Inspect and manage them with:
+
+```bash
+orbit process:list --instance=my-app.development
+orbit process:update vite --command='bun run dev' --restart
+orbit process:remove vite --instance=my-app.development
+```
 
 ## 5. Verify
 

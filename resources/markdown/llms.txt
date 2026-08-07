@@ -15,11 +15,11 @@ Read the one that matches the machine you are setting up. Both replace the envir
 - [Laravel Herd](https://launch.nckrtl.com/herd.md): Herd serves the app itself, so `php artisan serve` and `composer dev` must not be used.
 - [Orbit](https://launch.nckrtl.com/orbit.md): Orbit serves the app through a managed FrankenPHP process, so `php artisan serve` and `composer dev` must not be used.
 
-## How dev processes are run
+## How long-running processes are run
 
-Independent of the choice above. Applies to the agent, not the machine.
+Decided by the choice above: whatever serves the app owns its processes. Under Orbit they belong in Orbit (`orbit process:add`), because Orbit's runtime units inject the Vite dev-server TLS variables that a separately started process would not get.
 
-- [Solo](https://launch.nckrtl.com/solo.md): For agents with the Solo MCP server available. The kit ships a `solo.yml`; start and inspect processes through Solo instead of backgrounding them in a shell.
+- [Solo](https://launch.nckrtl.com/solo.md): For agents with the Solo MCP server available, and only when Orbit is not managing the project. The kit ships `solo.yml` with no processes for exactly this reason.
 
 ## Source
 

@@ -50,7 +50,8 @@ already holds your generated `APP_KEY`.
 
 ## 2. Detect the environment
 
-Two independent questions. Answer both now, before writing `.env`.
+Two questions, in order — the second depends on the first. Answer both now, before writing
+`.env`.
 
 ### 2a. What serves the app?
 
@@ -70,19 +71,29 @@ If both print, prefer **orbit**.
 Fetch the addendum before continuing — it changes the URLs you are about to write and the
 command you use to run the app.
 
-### 2b. What runs the dev processes?
+### 2b. What runs the long-running processes?
+
+Vite, the queue worker, and the log tailer have to run somewhere. **Whatever serves the app
+owns them**, so 2a decides this first.
 
 Check **your own tool list** for tools named `mcp__solo__*`. This is not a shell check; it is
 about what you as an agent can call. The `solo` binary being on `PATH` does not count if you
 have no Solo tools.
 
-| Solo MCP tools available | Do this                                                                |
-| ------------------------ | ---------------------------------------------------------------------- |
-| yes                      | Read <https://launch.nckrtl.com/solo.md> and use it for step 6.        |
-| no                       | Stay on this page and use the backgrounded server described in step 6. |
+| 2a result | Solo MCP tools | Who owns the processes                                           |
+| --------- | -------------- | ---------------------------------------------------------------- |
+| `orbit`   | either         | **Orbit** — register them with `orbit process:add`. Not in Solo. |
+| `herd`    | yes            | **Solo** — see <https://launch.nckrtl.com/solo.md>.              |
+| `herd`    | no             | `composer dev`, or run Vite yourself.                            |
+| neither   | yes            | **Solo** — see <https://launch.nckrtl.com/solo.md>.              |
+| neither   | no             | The backgrounded server in step 6, then `composer dev`.          |
 
-This is independent of 2a. Orbit + Solo, Herd + Solo, and Solo alone are all valid; so is
-neither. The rest of this guide is identical either way.
+Orbit wins whenever it is present. Its runtime units inject `VITE_DEV_SERVER_KEY` and
+`VITE_DEV_SERVER_CERT`, which Vite needs to serve assets over the HTTPS Orbit domain; the same
+command started by Solo gets neither, and defining it in both places runs it twice.
+
+The kit therefore ships `solo.yml` with `processes: {}`. Only fill it in when Orbit is not
+managing the project.
 
 ## 3. Configure the environment
 
@@ -163,8 +174,8 @@ or tell the user to run it themselves.
 
 ## Local environment addenda
 
-Each addendum below is required reading when it applies, not optional. They are independent of
-each other — you may need none, one, or one from each group.
+Each addendum below is required reading when it applies, not optional. Read the serving one
+first — it decides whether the process one applies at all.
 
 **How the app is served** — replaces steps 3 and 6:
 
@@ -173,10 +184,10 @@ each other — you may need none, one, or one from each group.
 - [Orbit](https://launch.nckrtl.com/orbit.md) — Orbit serves the app through a managed
   FrankenPHP process; do not run `php artisan serve` or `composer dev`.
 
-**How dev processes are run** — replaces step 6:
+**How long-running processes are run** — replaces step 6:
 
-- [Solo](https://launch.nckrtl.com/solo.md) — for agents with the Solo MCP server. The kit
-  ships a `solo.yml`; start processes through Solo rather than backgrounding them in a shell.
+- [Solo](https://launch.nckrtl.com/solo.md) — for agents with the Solo MCP server, **and only
+  when Orbit is not managing the project**. Under Orbit, processes belong in Orbit.
 
 If none apply, this page is complete on its own.
 
