@@ -31,6 +31,60 @@ guessing at a workaround.
 - Bun 1.3 or newer (`bun -v`)
 - Optionally Orbit or Herd for local HTTPS domains
 
+## If you can spawn subagents, read this first
+
+Setup fans out well. The critical path is short:
+
+```
+composer create-project  →  .env  →  bun run build  →  verify
+```
+
+Everything else hangs off it. If you cannot spawn subagents, skip this section and follow the
+numbered steps in order — same result, just slower.
+
+### Before creating anything
+
+These have no dependencies. Run them concurrently instead of in sequence:
+
+- `command -v orbit` and `command -v herd` (step 2a)
+- checking your own tool list for `mcp__solo__*` (step 2b)
+- fetching whichever addendum that implies
+
+### Immediately after `composer create-project`
+
+Fan out. Nothing here depends on anything else here:
+
+| Task                                    | Owner           | Produces               |
+| --------------------------------------- | --------------- | ---------------------- |
+| `bun install`                           | subagent        | —                      |
+| register the site (Herd/Orbit addendum) | subagent        | the app URL for `.env` |
+| git hooks (step 5)                      | subagent        | —                      |
+| ask the user for the project name       | **main thread** | `APP_NAME` for `.env`  |
+
+Ask your questions while those run. That is the point — the main thread should never sit idle
+waiting on `bun install`.
+
+### Join at .env
+
+`.env` needs both answers: the URL from the registration subagent and the name from the user.
+Write it once, when both are in. Do not write a placeholder and rewrite it later.
+
+`bun run build` depends on this join, not merely on `bun install`. `VITE_APP_NAME` is read from
+`.env` and baked into the JS bundle as the document title suffix, so a build started before the
+name is set produces a bundle you have to discard.
+
+### Fan out again after the build
+
+- `composer test`
+- boot the app and check for the built CSS (step 6)
+
+### What must stay serial
+
+- `composer create-project` — everything depends on it.
+- `.env` before the site is registered — under Herd or Orbit the URL is not `localhost`, and you
+  do not know it until registration returns.
+- `bun run build` before `.env` — the bundle would carry the wrong app name.
+
 ## 1. Create the project
 
 ```bash
@@ -209,101 +263,12 @@ php artisan migrate --force
 
 ---
 
-# Conventions to follow when building
+## Next: the conventions
 
-Once the project runs, these are the rules that keep it consistent. They are also written to
-`AGENTS.md` in the project root, which is the authoritative copy.
+Setup is done. Before writing any code in this project, read
+<https://launch.nckrtl.com/conventions.md>.
 
-## Routing: Waymaker, not route files
-
-`routes/web.php` contains only `Waymaker::routes()`. Routes are declared as PHP attributes on
-controller methods:
-
-```php
-namespace App\Http\Controllers;
-
-use NckRtl\Waymaker\Get;
-use Inertia\Response;
-
-class ProjectController extends Controller
-{
-    #[Get(uri: '/projects/{project}')]
-    public function show(Project $project): Response
-    {
-        return inertia('Projects/Show', [
-            'project' => $project,
-        ]);
-    }
-}
-```
-
-Do not add routes to `routes/web.php`.
-
-## URLs in the frontend: Wayfinder, not strings
-
-Wayfinder generates typed helpers at build time. Import them; never hardcode a URL.
-
-```tsx
-import { show } from "@/actions/App/Http/Controllers/ProjectController";
-
-<Link href={show(project.id)}>Open</Link>;
-```
-
-## Components: shadcn base-nova on Base UI
-
-```bash
-bunx shadcn add button dialog          # shadcn components on Base UI primitives
-bunx shadcn add @launch/app-sidebar-layout  # layouts from the @launch registry
-```
-
-Never install `@radix-ui/*` packages. This kit is configured for Base UI, and mixing the two
-gives you two incompatible primitive layers.
-
-## Styling
-
-Design tokens live in `resources/css/theme.css` as oklch values. Put new tokens there rather
-than scattering literal colors through components.
-
-## Pages
-
-Page components go in `resources/js/pages/` and are resolved by Inertia automatically. SSR is
-on, so keep server and browser renders deterministic and keep browser-only APIs
-(`window`, `localStorage`, `matchMedia`) out of render paths — read them in effects.
-
-## Internationalisation
-
-Off by default. Enable in `vite.config.ts`:
-
-```ts
-export default await defineLaunchConfig({ i18n: true });
-```
-
-Then add `lang/en.json`, and use the `__()` helper in components:
-
-```tsx
-import { __ } from "@nckrtl/launch-ui/i18n";
-
-<p>{__("Hello :name", { name: "Nick" })}</p>;
-```
-
-## Commands
-
-| Command            | Does                                   |
-| ------------------ | -------------------------------------- |
-| `composer dev`     | Server, queue, logs, and Vite together |
-| `composer test`    | Pest test suite                        |
-| `composer analyse` | PHPStan at level 9                     |
-| `composer lint`    | Pint (PHP formatting)                  |
-| `composer check`   | test + analyse + frontend lint         |
-| `composer fix`     | Rector + Pint + frontend autofix       |
-| `bun run dev`      | Vite dev server only                   |
-| `bun run build`    | Production build                       |
-
-## Quality gates
-
-The kit is configured for PHPStan level 9 and Pest 5. Before reporting a feature as done:
-
-- Backend behaviour needs a Pest feature or unit test.
-- Inertia responses need assertions on the component name and props.
-- User-visible workflows need a Pest Browser test in `tests/Browser/`.
-- `composer check` must pass.
+It covers the rules that keep a Launch project consistent — attribute routing with Waymaker,
+typed URLs with Wayfinder, Base UI rather than Radix, where design tokens live, SSR
+constraints, the command list, and the quality gates a feature has to clear before you can call
+it done. Skipping it produces code that runs but fights the toolchain.

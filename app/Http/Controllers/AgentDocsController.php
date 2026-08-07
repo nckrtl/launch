@@ -28,6 +28,12 @@ class AgentDocsController extends Controller
         return $this->markdown('create.md', 'text/markdown');
     }
 
+    #[Get(uri: '/conventions.md')]
+    public function conventions(): Response
+    {
+        return $this->markdown('conventions.md', 'text/markdown');
+    }
+
     #[Get(uri: '/herd.md')]
     public function herd(): Response
     {

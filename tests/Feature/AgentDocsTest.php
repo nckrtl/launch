@@ -18,6 +18,35 @@ it('lists every local environment addendum in llms.txt', function () {
         ->toContain('https://launch.nckrtl.com/solo.md');
 });
 
+it('links the conventions document from llms.txt and the end of setup', function () {
+    expect($this->get('/llms.txt')->getContent())
+        ->toContain('https://launch.nckrtl.com/conventions.md');
+
+    // An agent that only fetches create.md must still be told where the rules are.
+    expect($this->get('/create.md')->getContent())
+        ->toContain('https://launch.nckrtl.com/conventions.md');
+});
+
+it('serves the conventions separately from the setup guide', function () {
+    $conventions = $this->get('/conventions.md');
+
+    $conventions->assertSuccessful()
+        ->assertHeader('Content-Type', 'text/markdown; charset=utf-8');
+
+    expect($conventions->getContent())
+        ->toContain('Waymaker')
+        ->toContain('Wayfinder')
+        ->toContain('@radix-ui')
+        ->toContain('Quality gates');
+
+    // The setup guide keeps the setup steps and sheds the rules.
+    $setup = $this->get('/create.md')->getContent();
+
+    expect($setup)->toContain('composer create-project')
+        ->and($setup)->not->toContain('Quality gates')
+        ->and($setup)->not->toContain('bunx shadcn add');
+});
+
 it('serves the setup guide as markdown', function () {
     $this->get('/create.md')
         ->assertSuccessful()
@@ -48,6 +77,23 @@ it('makes the guide branch on the detected environment before writing .env', fun
     expect($content)
         ->toContain('https://launch.nckrtl.com/herd.md')
         ->toContain('https://launch.nckrtl.com/orbit.md');
+});
+
+it('gives agents a parallel plan with an accurate critical path', function () {
+    $content = $this->get('/create.md')->getContent();
+
+    expect($content)
+        ->toContain('If you can spawn subagents')
+        // VITE_APP_NAME is read from .env and baked into the bundle, so the build
+        // genuinely waits on the .env join rather than only on `bun install`.
+        ->toContain('VITE_APP_NAME')
+        ->toContain('What must stay serial');
+
+    // The plan must appear before the steps it reorders.
+    $plan = strpos($content, 'If you can spawn subagents');
+    $firstStep = strpos($content, '## 1. Create the project');
+
+    expect($plan)->toBeLessThan($firstStep);
 });
 
 it('warns that composer dev never exits', function () {

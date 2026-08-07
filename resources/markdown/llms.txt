@@ -6,7 +6,11 @@ If you were pointed at this site to scaffold a new project, read the setup guide
 
 ## Setup
 
-- [Create a new project](https://launch.nckrtl.com/create.md): Complete, non-interactive instructions to create, configure, and run a new Launch project, plus the conventions to follow when building on it. Start here.
+- [Create a new project](https://launch.nckrtl.com/create.md): Complete, non-interactive instructions to create, configure, and run a new Launch project. Start here.
+
+## Building on it
+
+- [Conventions](https://launch.nckrtl.com/conventions.md): The rules a Launch project expects — attribute routing, typed frontend URLs, Base UI over Radix, design tokens, SSR constraints, commands, and the quality gates a feature must clear. Read after setup, before writing code.
 
 ## How the app is served
 
