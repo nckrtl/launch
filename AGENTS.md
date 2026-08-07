@@ -11,7 +11,7 @@ Laravel 13 + Launch Laravel + React 19 + Inertia v3 + VitePlus + Tailwind CSS v4
 - **Components**: shadcn base-nova components backed by Base UI (`@base-ui/react`)
 - **Icons**: Lucide React
 - **Toolchain**: VitePlus (Vite 8 + Oxc linting/formatting)
-- **Vite config**: `defineLaunchConfig()` from `@hardimpactdev/launch-ui/vite`
+- **Vite config**: `defineLaunchConfig()` from `@nckrtl/launch-ui/vite`
 
 Launch Laravel is expected as a sibling checkout at `../launch-laravel`. Use `composer link ../launch-laravel` after `composer install` so local package changes are used while developing the starter kit.
 
@@ -49,7 +49,7 @@ When React and Inertia guidance overlap:
 `vite.config.ts` uses `defineLaunchConfig()` which bundles all plugins:
 
 ```ts
-import { defineLaunchConfig } from "@hardimpactdev/launch-ui/vite";
+import { defineLaunchConfig } from "@nckrtl/launch-ui/vite";
 export default await defineLaunchConfig();
 ```
 
@@ -92,7 +92,7 @@ lang/
 Use `__()` — a plain function import matching Laravel's Blade `__()` helper:
 
 ```tsx
-import { __ } from "@hardimpactdev/launch-ui/i18n";
+import { __ } from "@nckrtl/launch-ui/i18n";
 
 function MyComponent() {
     return <p>{__("Hello :name", { name: "Nick" })}</p>;
@@ -104,7 +104,7 @@ Supports `:placeholder`, `:Placeholder` (ucfirst), and `:PLACEHOLDER` (uppercase
 ### Language switching
 
 ```tsx
-import { __, useLocale, setLocale } from "@hardimpactdev/launch-ui/i18n";
+import { __, useLocale, setLocale } from "@nckrtl/launch-ui/i18n";
 
 function LanguageSwitcher() {
     const locale = useLocale(); // reactive — triggers re-render on change
@@ -122,7 +122,7 @@ function LanguageSwitcher() {
 
 ## Routing
 
-- **Waymaker** (`hardimpactdev/waymaker`): attribute-based PHP routing. Controllers use `#[Get]`, `#[Post]`, etc. attributes instead of route files. Routes are registered via `Waymaker::routes()` in `routes/web.php`.
+- **Waymaker** (`nckrtl/waymaker`): attribute-based PHP routing. Controllers use `#[Get]`, `#[Post]`, etc. attributes instead of route files. Routes are registered via `Waymaker::routes()` in `routes/web.php`.
 - **Wayfinder** (`laravel/wayfinder` + `@laravel/vite-plugin-wayfinder`): auto-generates TypeScript route helpers at build time. Import from `@/actions/` for type-safe URLs.
 
 ## Component Registry

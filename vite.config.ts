@@ -1,4 +1,4 @@
-import { defineLaunchConfig } from "@hardimpactdev/launch-ui/vite";
+import { defineLaunchConfig } from "@nckrtl/launch-ui/vite";
 import { defineConfig } from "vite-plus";
 
 const launchConfig = await defineLaunchConfig({
