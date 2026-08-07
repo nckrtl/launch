@@ -19,7 +19,7 @@ Read the one that matches the machine you are setting up. Both replace the envir
 
 Decided by the choice above: whatever serves the app owns its processes. Under Orbit they belong in Orbit (`orbit process:add`), because Orbit's runtime units inject the Vite dev-server TLS variables that a separately started process would not get.
 
-- [Solo](https://launch.nckrtl.com/solo.md): For agents with the Solo MCP server available, and only when Orbit is not managing the project. The kit ships `solo.yml` with no processes for exactly this reason.
+- [Solo](https://launch.nckrtl.com/solo.md): For agents with the Solo MCP server available, and only when Orbit is not managing the project. The kit ships no `solo.yml`; writing one is part of setup.
 
 ## Source
 

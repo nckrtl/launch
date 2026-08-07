@@ -92,8 +92,8 @@ Orbit wins whenever it is present. Its runtime units inject `VITE_DEV_SERVER_KEY
 `VITE_DEV_SERVER_CERT`, which Vite needs to serve assets over the HTTPS Orbit domain; the same
 command started by Solo gets neither, and defining it in both places runs it twice.
 
-The kit therefore ships `solo.yml` with `processes: {}`. Only fill it in when Orbit is not
-managing the project.
+The kit therefore ships **no** `solo.yml` at all. Creating one is part of setup, and only when
+Orbit is not managing the project — `/solo.md` has the file to write.
 
 ## 3. Configure the environment
 
@@ -187,7 +187,8 @@ first — it decides whether the process one applies at all.
 **How long-running processes are run** — replaces step 6:
 
 - [Solo](https://launch.nckrtl.com/solo.md) — for agents with the Solo MCP server, **and only
-  when Orbit is not managing the project**. Under Orbit, processes belong in Orbit.
+  when Orbit is not managing the project**. Under Orbit, processes belong in Orbit. Creating
+  `solo.yml` is part of setup; the kit does not ship one.
 
 If none apply, this page is complete on its own.
 

@@ -38,12 +38,17 @@ reading output, scratchpads, todos. Just do not let it define the app's services
 Herd is different: it serves PHP but does not manage arbitrary processes, so Solo owning Vite,
 the queue, and logs under Herd is correct.
 
-## 3. Define the processes
+## 3. Create solo.yml
 
-The kit ships a `solo.yml` with `processes: {}` on purpose, because it cannot know whether
-Orbit is present. If you got here, Orbit is not managing this project, so fill it in:
+**The kit does not ship a `solo.yml`.** It cannot know whether Orbit is managing the project,
+and a file that declares these processes would be wrong for every Orbit user. Creating it is
+part of setup, and you only do it if step 2 sent you here.
+
+Write `solo.yml` in the project root:
 
 ```yaml
+name: My App
+icon: null
 processes:
     Vite:
         command: bun run dev
@@ -65,8 +70,12 @@ processes:
         auto_start: false
 ```
 
-Leave `Server` on `auto_start: false` and only start it when nothing else serves the app. Under
-Herd, Herd is already serving it — starting this would bind a second PHP server on port 8000.
+Set `name` to the project's actual name. Leave `Server` on `auto_start: false` and only start
+it when nothing else serves the app — under Herd, Herd is already serving it, and starting this
+would bind a second PHP server on port 8000.
+
+`solo.yml` is repo-controlled config and the source of truth for YAML-backed commands, so
+commit it. Changing a command later means editing this file, not Solo's local state.
 
 ## 4. Register the project
 

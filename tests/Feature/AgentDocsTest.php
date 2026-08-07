@@ -1,7 +1,5 @@
 <?php
 
-use Symfony\Component\Yaml\Yaml;
-
 it('serves llms.txt as plain text', function () {
     $this->get('/llms.txt')
         ->assertSuccessful()
@@ -78,13 +76,14 @@ it('tells agents to detect Solo from their tool list, not the shell', function (
     expect($this->get('/create.md')->getContent())->toContain('mcp__solo__');
 });
 
-it('ships solo.yml with no processes so Orbit can own them', function () {
-    $solo = Yaml::parseFile(base_path('solo.yml'));
+it('ships no solo.yml, leaving it to the setup flow', function () {
+    // Orbit's runtime units inject VITE_DEV_SERVER_KEY/CERT. A shipped solo.yml
+    // declaring those commands would be wrong for every Orbit user, and the kit
+    // cannot know which environment it lands in. The agent writes it if needed.
+    expect(file_exists(base_path('solo.yml')))->toBeFalse();
 
-    // Orbit's runtime units inject VITE_DEV_SERVER_KEY/CERT. Declaring the same
-    // commands here would start them a second time without those variables, so
-    // the kit cannot pre-configure them without knowing whether Orbit is present.
-    expect($solo['processes'])->toBe([]);
+    expect($this->get('/solo.md')->getContent())
+        ->toContain('does not ship a `solo.yml`');
 });
 
 it('gives process ownership to Orbit whenever Orbit is present', function () {
@@ -100,7 +99,7 @@ it('gives process ownership to Orbit whenever Orbit is present', function () {
 
     expect($this->get('/create.md')->getContent())
         ->toContain('orbit process:add')
-        ->toContain('processes: {}');
+        ->toContain('no** `solo.yml`');
 });
 
 it('tells both environments not to start a second PHP server', function (string $uri) {
