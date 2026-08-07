@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use HardImpact\Waymaker\Get;
 use Inertia\Response;
 use Inertia\ResponseFactory;
+use NckRtl\Waymaker\Get;
 
 class HomeController extends Controller
 {

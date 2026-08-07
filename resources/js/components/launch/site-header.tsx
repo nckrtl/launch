@@ -118,7 +118,7 @@ export function SiteHeader() {
                             nativeButton={false}
                             render={
                                 <a
-                                    href="https://github.com/hardimpactdev/launch-starter-kit"
+                                    href="https://github.com/nckrtl/launch-starter-kit"
                                     target="_blank"
                                     rel="noreferrer"
                                 />

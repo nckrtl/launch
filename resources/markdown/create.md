@@ -131,7 +131,7 @@ controller methods:
 ```php
 namespace App\Http\Controllers;
 
-use HardImpact\Waymaker\Get;
+use NckRtl\Waymaker\Get;
 use Inertia\Response;
 
 class ProjectController extends Controller
@@ -190,7 +190,7 @@ export default await defineLaunchConfig({ i18n: true });
 Then add `lang/en.json`, and use the `__()` helper in components:
 
 ```tsx
-import { __ } from "@hardimpactdev/launch-ui/i18n";
+import { __ } from "@nckrtl/launch-ui/i18n";
 
 <p>{__("Hello :name", { name: "Nick" })}</p>;
 ```

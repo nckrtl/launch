@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use HardImpact\Waymaker\Get;
 use Illuminate\Http\Response;
+use NckRtl\Waymaker\Get;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**

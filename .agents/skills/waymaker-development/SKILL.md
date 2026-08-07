@@ -1,6 +1,6 @@
 ---
 name: waymaker-development
-description: Use when adding, changing, debugging, testing, or consuming Laravel controller routes defined with HardImpact Waymaker attributes, generated routes/waymaker.php, or related Wayfinder action functions.
+description: Use when adding, changing, debugging, testing, or consuming Laravel controller routes defined with Waymaker attributes, generated routes/waymaker.php, or related Wayfinder action functions.
 license: MIT
 ---
 
@@ -20,7 +20,7 @@ the loaded Laravel routes into typed frontend functions.
 
 1. Inspect neighboring controllers, `routes/web.php`, `vite.config.ts`, and the
    installed Waymaker source. Verify fast-moving syntax with
-   `composer show hardimpactdev/waymaker` and Artisan command help.
+   `composer show nckrtl/waymaker` and Artisan command help.
 2. Add an explicit HTTP attribute to every public controller action that should
    be routable: `Get`, `Post`, `Put`, `Patch`, or `Delete`.
 3. Express route details on the attribute with `uri`, `name`, `parameters`, and
@@ -42,8 +42,8 @@ the loaded Laravel routes into typed frontend functions.
 ## Example
 
 ```php
-use HardImpact\Waymaker\Get;
-use HardImpact\Waymaker\Patch;
+use NckRtl\Waymaker\Get;
+use NckRtl\Waymaker\Patch;
 
 class TeamController extends Controller
 {
