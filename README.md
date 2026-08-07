@@ -43,7 +43,6 @@ resolve only on your machine and break `composer create-project` for everyone el
 
 ```bash
 composer link ../../packages/launch-laravel
-composer link ../../packages/laravel-toolbar-agentation   # optional toolbar addon
 php artisan package:discover
 ```
 
