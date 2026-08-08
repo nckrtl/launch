@@ -10,7 +10,7 @@ export type UseAppearanceReturn = {
 };
 
 const listeners = new Set<() => void>();
-let currentAppearance: Appearance = "light";
+let currentAppearance: Appearance = "system";
 
 const prefersDark = (): boolean => {
     if (typeof window === "undefined") {
@@ -34,7 +34,12 @@ const getStoredAppearance = (): Appearance => {
         return "system";
     }
 
-    return (localStorage.getItem("appearance") as Appearance) || "light";
+    const value = localStorage.getItem("appearance");
+    if (value === "light" || value === "dark" || value === "system") {
+        return value;
+    }
+
+    return "system";
 };
 
 const isDarkMode = (appearance: Appearance): boolean => {
@@ -68,16 +73,21 @@ const mediaQuery = (): MediaQueryList | null => {
     return window.matchMedia("(prefers-color-scheme: dark)");
 };
 
-const handleSystemThemeChange = (): void => applyTheme(currentAppearance);
+const handleSystemThemeChange = (): void => {
+    if (currentAppearance === "system") {
+        applyTheme("system");
+        notify();
+    }
+};
 
 export function initializeTheme(): void {
     if (typeof window === "undefined") {
         return;
     }
 
-    if (!localStorage.getItem("appearance") || localStorage.getItem("appearance") === "system") {
-        localStorage.setItem("appearance", "light");
-        setCookie("appearance", "light");
+    if (!localStorage.getItem("appearance")) {
+        localStorage.setItem("appearance", "system");
+        setCookie("appearance", "system");
     }
 
     currentAppearance = getStoredAppearance();
@@ -91,7 +101,7 @@ export function useAppearance(): UseAppearanceReturn {
     const appearance: Appearance = useSyncExternalStore(
         subscribe,
         () => currentAppearance,
-        () => "light",
+        () => "system",
     );
 
     const resolvedAppearance: ResolvedAppearance = isDarkMode(appearance) ? "dark" : "light";

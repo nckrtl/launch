@@ -52,8 +52,55 @@ export const CROSS_POS: Record<string, React.CSSProperties> = {
     br: { bottom: -5, right: -5 },
 };
 
-export function Tee({ pos }: { pos: React.CSSProperties }) {
-    const bar: React.CSSProperties = { position: "absolute", background: "var(--grid-cross)" };
+const headerListeners = new Set<(highlight: boolean) => void>();
+let isHeaderHighlighted = false;
+let currentHoveredEl: HTMLElement | null = null;
+
+function setHeaderHighlight(highlight: boolean) {
+    if (isHeaderHighlighted !== highlight) {
+        isHeaderHighlighted = highlight;
+        headerListeners.forEach((listener) => listener(highlight));
+    }
+}
+
+function checkCurrentOverlap() {
+    if (!currentHoveredEl) {
+        setHeaderHighlight(false);
+        return;
+    }
+
+    const rect = currentHoveredEl.getBoundingClientRect();
+    const headerEl = document.querySelector("header");
+    const headerBottom = headerEl ? headerEl.getBoundingClientRect().bottom : 64;
+
+    const overlaps = rect.top <= headerBottom + 2 && rect.bottom >= 0;
+    setHeaderHighlight(overlaps);
+}
+
+if (typeof window !== "undefined") {
+    window.addEventListener("scroll", checkCurrentOverlap, { passive: true });
+}
+
+export function useHeaderHighlight(): boolean {
+    const [highlight, setHighlight] = React.useState(isHeaderHighlighted);
+
+    React.useEffect(() => {
+        headerListeners.add(setHighlight);
+        return () => {
+            headerListeners.delete(setHighlight);
+        };
+    }, []);
+
+    return highlight;
+}
+
+export function Tee({ pos, on }: { pos: React.CSSProperties; on?: boolean }) {
+    const c = on ? "var(--accent)" : "var(--grid-cross)";
+    const bar: React.CSSProperties = {
+        position: "absolute",
+        background: c,
+        transition: "background var(--dur-fast) var(--ease-out)",
+    };
     return (
         <span
             style={{
@@ -121,12 +168,28 @@ export function Frame({ children, crosses = true, style, className, ...props }: 
     const bp = useBP();
     const list = crosses === true ? ["tl", "tr", "bl", "br"] : crosses || [];
 
+    const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
+        setHover(true);
+        currentHoveredEl = e.currentTarget;
+        checkCurrentOverlap();
+        props.onMouseEnter?.(e);
+    };
+
+    const handleMouseLeave = (e: React.MouseEvent<HTMLDivElement>) => {
+        setHover(false);
+        if (currentHoveredEl === e.currentTarget) {
+            currentHoveredEl = null;
+            checkCurrentOverlap();
+        }
+        props.onMouseLeave?.(e);
+    };
+
     return (
         <div
             className={cn("grid-frame", className)}
             style={{ ...COL, ...(bp === 0 ? MOBW : null), ...style }}
-            onMouseEnter={() => setHover(true)}
-            onMouseLeave={() => setHover(false)}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
             {...props}
         >
             {list.map((k) => {

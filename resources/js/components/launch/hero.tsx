@@ -181,7 +181,7 @@ export function Hero() {
                             marginRight: "-0.15em",
                         }}
                     >
-                        Launch your next unicorn
+                        Launch your next idea
                         <br />
                         faster than ever
                     </span>
@@ -213,7 +213,7 @@ export function Hero() {
                             marginRight: "-0.15em",
                         }}
                     >
-                        Launch your next unicorn
+                        Launch your next idea
                         <br />
                         faster than ever
                         <span style={{ opacity: 0 }}>_</span>

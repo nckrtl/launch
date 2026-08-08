@@ -194,7 +194,7 @@
 
     --grid-line: rgba(0, 0, 0, 0.06);
     --grid-line-strong: rgba(0, 0, 0, 0.12);
-    --grid-cross: #e5e5e5;
+    --grid-cross: #cccccc;
 
     --destructive: #ef4444;
     --destructive-foreground: #ffffff;

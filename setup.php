@@ -11,7 +11,7 @@ declare(strict_types=1);
  * - Installs Composer and Node dependencies
  * - Links the sibling Launch Laravel package when available
  * - Generates app key, runs migrations
- * - Sets up Git config-based hooks
+ * - Reports the git hooks installed by `vp config`
  * - Links and secures site with Orbit/Herd
  * - Optionally deletes itself
  */
@@ -260,57 +260,27 @@ function runMigrations($envContent, $updated)
 
 function setupGitHooks($envContent, $updated)
 {
-    exec('git --version 2>/dev/null', $output, $code);
-    $version = $output[0] ?? '';
+    // Hooks are installed by `vp config`, which `bun install` runs via the
+    // package.json `prepare` script. It sets core.hooksPath to VitePlus's
+    // dispatcher, which runs the committed .vite-hooks/pre-commit and
+    // .vite-hooks/pre-push scripts. Nothing to configure here -- this step only
+    // reports what happened.
+    //
+    // Do not unset core.hooksPath, and do not set hook.* git config keys: those
+    // need Git 2.54+, cannot be committed because git config is per-clone, and
+    // would disable the dispatcher that already works everywhere.
+    exec('git config --local --get core.hooksPath 2>/dev/null', $output, $code);
+    $hooksPath = $output[0] ?? '';
 
-    if ($code !== 0 || ! preg_match('/(\d+)\.(\d+)\.(\d+)/', $version, $matches)) {
-        echo "Skipping Git hooks (Git not found).\n\n";
+    if ($code === 0 && $hooksPath !== '') {
+        echo "Git hooks installed (core.hooksPath = {$hooksPath}).\n";
+        echo "  pre-commit: staged tasks from vite.config.ts\n";
+        echo "  pre-push:   composer test && composer analyse\n\n";
 
         return [$envContent, $updated];
     }
 
-    $major = (int) $matches[1];
-    $minor = (int) $matches[2];
-
-    if ($major < 2 || ($major === 2 && $minor < 54)) {
-        echo "Skipping Git config hooks (Git 2.54+ required, found {$version}).\n\n";
-
-        return [$envContent, $updated];
-    }
-
-    echo "Setting up Git config-based hooks...\n";
-
-    exec('git config --local --get core.hooksPath 2>/dev/null', $hooksPathOutput, $hooksPathReturnVar);
-    if ($hooksPathReturnVar === 0 && ($hooksPathOutput[0] ?? '') === '.vite-hooks/_') {
-        passthru('git config --local --unset core.hooksPath', $unsetHooksPathReturnVar);
-        if ($unsetHooksPathReturnVar === 0) {
-            echo "Removed legacy VitePlus hook path.\n";
-        }
-    }
-
-    $hooks = [
-        ['launch-lint', 'pre-commit', 'composer lint'],
-        ['launch-frontend', 'pre-commit', 'vp check --fix'],
-        ['launch-test', 'pre-push', "sh -c 'composer test' --"],
-        ['launch-analyse', 'pre-push', "sh -c 'composer analyse' --"],
-    ];
-
-    $returnVar = 0;
-
-    foreach ($hooks as [$name, $event, $command]) {
-        passthru('git config --local --replace-all '.escapeshellarg("hook.{$name}.event").' '.escapeshellarg($event), $eventReturnVar);
-        passthru('git config --local --replace-all '.escapeshellarg("hook.{$name}.command").' '.escapeshellarg($command), $commandReturnVar);
-
-        if ($eventReturnVar !== 0 || $commandReturnVar !== 0) {
-            $returnVar = 1;
-        }
-    }
-
-    if ($returnVar === 0) {
-        echo "Git hooks configured.\n\n";
-    } else {
-        echo "Failed to configure Git hooks.\n\n";
-    }
+    echo "Git hooks not installed yet. Run `bun install` (or `vp config`) to install them.\n\n";
 
     return [$envContent, $updated];
 }

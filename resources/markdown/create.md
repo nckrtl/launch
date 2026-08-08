@@ -170,20 +170,17 @@ bun install
 bun run build
 ```
 
-## 5. Install git hooks (optional but recommended)
+## 5. Git hooks — nothing to do
 
-The kit uses git config-based hooks rather than a hook manager:
+`bun install` in step 4 already installed them. It runs `vp config` via the package.json
+`prepare` script, which points `core.hooksPath` at VitePlus's dispatcher; that dispatcher runs
+the committed `.vite-hooks/pre-commit` and `.vite-hooks/pre-push` scripts.
 
-```bash
-git config --local --replace-all hook.launch-lint.event pre-commit
-git config --local --replace-all hook.launch-lint.command "composer lint"
-git config --local --replace-all hook.launch-frontend.event pre-commit
-git config --local --replace-all hook.launch-frontend.command "vp check --fix"
-git config --local --replace-all hook.launch-test.event pre-push
-git config --local --replace-all hook.launch-test.command "sh -c 'composer test' --"
-git config --local --replace-all hook.launch-analyse.event pre-push
-git config --local --replace-all hook.launch-analyse.command "sh -c 'composer analyse' --"
-```
+Pre-commit runs the `staged` tasks from `vite.config.ts` against staged files and re-stages
+what they fix. Pre-push runs `composer test && composer analyse`. Prefix a command with
+`VP_GIT_HOOKS=0` to skip them once.
+
+Do not configure `hook.*` git config keys. Nothing reads them.
 
 ## 6. Verify the install
 

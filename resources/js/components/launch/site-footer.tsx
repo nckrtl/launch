@@ -57,7 +57,7 @@ export function SiteFooter() {
                 </nav>
             </Frame>
             <div className="rule-h" />
-            <Frame style={{ padding: mob ? "14px 16px" : "16px 32px" }}>
+            <Frame crosses={["tl", "tr"]} style={{ padding: mob ? "14px 16px" : "16px 32px" }}>
                 <span
                     style={{
                         fontFamily: "var(--font-mono)",

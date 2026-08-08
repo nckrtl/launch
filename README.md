@@ -19,20 +19,20 @@ To do it manually:
 cp .env.example .env
 # Edit .env: set APP_NAME, APP_URL, VITE_APP_URL (e.g. https://my-app.test)
 composer install
-bun install
+bun install                 # also installs the git hooks
 php artisan key:generate
 touch database/database.sqlite
 php artisan migrate --force
-git config --local --replace-all hook.launch-lint.event pre-commit
-git config --local --replace-all hook.launch-lint.command "composer lint"
-git config --local --replace-all hook.launch-frontend.event pre-commit
-git config --local --replace-all hook.launch-frontend.command "vp check --fix"
-git config --local --replace-all hook.launch-test.event pre-push
-git config --local --replace-all hook.launch-test.command "sh -c 'composer test' --"
-git config --local --replace-all hook.launch-analyse.event pre-push
-git config --local --replace-all hook.launch-analyse.command "sh -c 'composer analyse' --"
 bun run build
 ```
+
+Git hooks need no setup. `bun install` runs `vp config` via the package.json `prepare`
+script, which points `core.hooksPath` at VitePlus's dispatcher; that dispatcher runs the
+committed [`.vite-hooks/pre-commit`](.vite-hooks/pre-commit) and
+[`.vite-hooks/pre-push`](.vite-hooks/pre-push) scripts. Pre-commit runs the `staged` tasks
+declared in `vite.config.ts` against staged files only and re-stages what they fix; pre-push
+runs `composer test && composer analyse`. Prefix a command with `VP_GIT_HOOKS=0` to skip them
+once.
 
 Then set the site up for your local environment — Herd and Orbit each need different steps,
 and both serve the app themselves, so neither uses `php artisan serve` or `composer dev`:

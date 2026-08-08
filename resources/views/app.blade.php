@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" @class(['dark' => ($appearance ?? 'light') === 'dark'])>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" @class(['dark' => ($appearance ?? 'system') === 'dark'])>
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -14,7 +14,7 @@
 
         <script nonce="{{ Vite::cspNonce() }}">
             (function() {
-                var appearance = '{{ $appearance ?? "light" }}';
+                var appearance = '{{ $appearance ?? "system" }}';
 
                 if (appearance === 'system') {
                     var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -27,8 +27,8 @@
         </script>
         <style nonce="{{ Vite::cspNonce() }}">
             html, body {
-                background-color: #0a0a0a;
-                color: #fafafa;
+                background-color: var(--background);
+                color: var(--foreground);
             }
         </style>
         @viteReactRefresh
