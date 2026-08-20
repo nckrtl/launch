@@ -1,5 +1,6 @@
 import React from "react";
 import { Toast } from "@/components/launch/brand";
+import { CornerBrackets } from "@/components/launch/corner-brackets";
 import { Frame, SectionDivider, useBP } from "@/components/launch/grid";
 import { LaunchIcon } from "@/components/launch/icons";
 import { useAppearance } from "@/hooks/use-appearance";
@@ -23,7 +24,13 @@ export function CTA() {
 
     const pinstripe = `url("data:image/svg+xml,${encodeURIComponent(
         `<svg xmlns='http://www.w3.org/2000/svg' width='4' height='4'><path d='M-1,1 l2,-2 M0,4 l4,-4 M3,5 l2,-2' stroke='${
-            chipHov ? "rgba(251,59,0,0.25)" : isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)"
+            chipHov
+                ? isDark
+                    ? "rgba(251,59,0,0.32)"
+                    : "rgba(251,59,0,0.22)"
+                : isDark
+                  ? "rgba(255,255,255,0.06)"
+                  : "rgba(0,0,0,0.06)"
         }' stroke-width='1'/></svg>`,
     )}")`;
 
@@ -52,10 +59,15 @@ export function CTA() {
                     One prompt to start. Paste it into your agent chat.
                 </p>
                 <button
+                    type="button"
                     onClick={copy}
                     title="Copy prompt"
+                    aria-label={`Copy prompt: ${prompt}`}
                     onMouseEnter={() => setChipHov(true)}
                     onMouseLeave={() => setChipHov(false)}
+                    onFocus={() => setChipHov(true)}
+                    onBlur={() => setChipHov(false)}
+                    className="focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--primary)]"
                     style={{
                         position: "relative",
                         display: "inline-flex",
@@ -71,7 +83,7 @@ export function CTA() {
                         backgroundColor: "transparent",
                         backgroundImage: pinstripe,
                         backgroundRepeat: "repeat",
-                        border: `1px solid ${chipHov ? "rgba(251,59,0,.3)" : "var(--grid-line)"}`,
+                        border: `1px solid ${chipHov ? "var(--accent-glow)" : "var(--grid-line)"}`,
                         borderRadius: 2,
                         padding: mob ? "12px 14px" : "14px 18px",
                         cursor: "pointer",
@@ -79,24 +91,13 @@ export function CTA() {
                         boxShadow: "none",
                     }}
                 >
-                    {["tl", "tr", "bl", "br"].map((at) => {
-                        const bb = "1px solid var(--primary)";
-                        const cs: React.CSSProperties = {
-                            position: "absolute",
-                            width: 5,
-                            height: 5,
-                            pointerEvents: "none",
-                            transition: "border-color var(--dur-fast) var(--ease-out)",
-                        };
-                        if (at[0] === "t") Object.assign(cs, { top: -1, borderTop: bb });
-                        else Object.assign(cs, { bottom: -1, borderBottom: bb });
-                        if (at[1] === "l") Object.assign(cs, { left: -1, borderLeft: bb });
-                        else Object.assign(cs, { right: -1, borderRight: bb });
-                        cs[
-                            `border${at[0] === "t" ? "Top" : "Bottom"}${at[1] === "l" ? "Left" : "Right"}Radius`
-                        ] = 2;
-                        return <span key={at} style={cs} />;
-                    })}
+                    <CornerBrackets
+                        offset={-1}
+                        size={5}
+                        radius={2}
+                        color="var(--primary)"
+                        active={true}
+                    />
                     <span style={{ color: "var(--accent)" }}>❯</span>
                     <span>"{prompt}"</span>
                     <LaunchIcon

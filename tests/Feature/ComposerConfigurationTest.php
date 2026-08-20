@@ -3,16 +3,31 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\File;
+use Symfony\Component\Process\Process;
 
-it('runs Pest with test impact analysis', function (): void {
+it('does not ship a root package version that would stale path create-project locks', function (): void {
     $composer = json_decode(
         File::get(base_path('composer.json')),
         associative: true,
         flags: JSON_THROW_ON_ERROR,
     );
 
-    expect($composer['scripts']['test'])
-        ->toContain('@php vendor/bin/pest --tia');
+    expect($composer)->not->toHaveKey('version');
+});
+
+it('runs Pest through the git-aware runner', function (): void {
+    $composer = json_decode(
+        File::get(base_path('composer.json')),
+        associative: true,
+        flags: JSON_THROW_ON_ERROR,
+    );
+
+    expect($composer['scripts']['test'])->toBe('@php scripts/run-pest.php')
+        ->and($composer['scripts']['test:browser'])->toBe('@php scripts/run-browser-tests.php')
+        ->and($composer['scripts']['dev'][1] ?? '')->toContain('bunx concurrently')
+        ->and($composer['scripts']['dev'][1] ?? '')->toContain('bun run dev')
+        ->and($composer['scripts']['dev'][1] ?? '')->not->toContain('npx ')
+        ->and($composer['scripts']['dev'][1] ?? '')->not->toContain('npm run dev');
 });
 
 it('ships committed git hooks that install themselves', function (): void {
@@ -40,6 +55,36 @@ it('isolates pre-push commands from Git arguments and stdin', function (): void 
         ->toContain('composer test </dev/null')
         ->toContain('composer analyse </dev/null')
         ->not->toContain('"$@"');
+});
+
+it('forwards composer test arguments to pest instead of artisan', function (): void {
+    $filter = new Process(
+        ['composer', 'test', '--', '--filter=it asserts true is true', '--compact'],
+        base_path(),
+    );
+    $filter->setTimeout(60);
+    $filter->mustRun();
+
+    $filterOutput = $filter->getOutput().$filter->getErrorOutput();
+
+    expect($filterOutput)
+        ->toContain('Tests:')
+        ->toContain('1 passed')
+        ->not->toContain('The "--filter" option does not exist');
+
+    $path = new Process(
+        ['composer', 'test', '--', 'tests/Unit/ExampleTest.php', '--compact'],
+        base_path(),
+    );
+    $path->setTimeout(60);
+    $path->mustRun();
+
+    $pathOutput = $path->getOutput().$path->getErrorOutput();
+
+    expect($pathOutput)
+        ->toContain('Tests:')
+        ->toContain('1 passed')
+        ->not->toContain('The "--filter" option does not exist');
 });
 
 it('does not reintroduce git config hooks, which cannot ship configured', function (): void {

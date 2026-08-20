@@ -92,6 +92,7 @@ export function initializeTheme(): void {
 
     currentAppearance = getStoredAppearance();
     applyTheme(currentAppearance);
+    notify();
 
     // Set up system theme change listener
     mediaQuery()?.addEventListener("change", handleSystemThemeChange);
@@ -104,7 +105,13 @@ export function useAppearance(): UseAppearanceReturn {
         () => "system",
     );
 
-    const resolvedAppearance: ResolvedAppearance = isDarkMode(appearance) ? "dark" : "light";
+    const resolvedDark: boolean = useSyncExternalStore(
+        subscribe,
+        () => isDarkMode(currentAppearance),
+        () => false,
+    );
+
+    const resolvedAppearance: ResolvedAppearance = resolvedDark ? "dark" : "light";
 
     const updateAppearance = (mode: Appearance): void => {
         currentAppearance = mode;

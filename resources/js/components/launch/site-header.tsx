@@ -6,6 +6,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { launchNow } from "@/components/launch/cta-button";
 import { Logo } from "@/components/launch/brand";
 import { COL, MOBW, Tee, useBP, useHeaderHighlight } from "@/components/launch/grid";
 import { LaunchIcon } from "@/components/launch/icons";
@@ -35,19 +36,6 @@ function ThemeSwitcher() {
     const triggerIcon =
         appearance === "system" ? "monitor" : resolvedAppearance === "dark" ? "moon" : "sun";
 
-    const isDark = resolvedAppearance === "dark";
-    const duotoneStyle: React.CSSProperties = isDark
-        ? ({
-              color: "#ffffff",
-              "--ic-a": "#ffffff",
-              "--ic-bg": "rgba(255, 255, 255, 0.22)",
-          } as React.CSSProperties)
-        : ({
-              color: "var(--accent)",
-              "--ic-a": "var(--accent)",
-              "--ic-bg": "rgba(251, 59, 0, 0.22)",
-          } as React.CSSProperties);
-
     return (
         <DropdownMenu>
             <DropdownMenuTrigger
@@ -60,7 +48,12 @@ function ThemeSwitcher() {
                     />
                 }
             >
-                <LaunchIcon name={triggerIcon} size={16} accent="duotone" style={duotoneStyle} />
+                <LaunchIcon
+                    name={triggerIcon}
+                    size={16}
+                    accent="duotone"
+                    className="text-primary"
+                />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-36">
                 {options.map((option) => {
@@ -76,17 +69,14 @@ function ThemeSwitcher() {
                                 name={option.icon}
                                 size={16}
                                 accent="duotone"
-                                style={duotoneStyle}
+                                className="text-primary"
                             />
                             <span className="flex-1">{option.label}</span>
                             {isActive ? (
                                 <LaunchIcon
                                     name="check"
                                     size={14}
-                                    className="ml-auto"
-                                    style={{
-                                        color: isDark ? "#ffffff" : "var(--accent)",
-                                    }}
+                                    className="ml-auto text-primary"
                                 />
                             ) : null}
                         </DropdownMenuItem>
@@ -195,15 +185,7 @@ export function SiteHeader() {
                         // Not `sm` on mobile: that is h-7 (28px) while the theme and GitHub
                         // triggers are size-8 (32px), so it sat 4px short of them.
                         className={mob ? "px-2 text-[13px]" : undefined}
-                        onClick={() => {
-                            const el = document.getElementById("agent-terminal");
-                            if (el) el.scrollIntoView({ behavior: "smooth" });
-                            try {
-                                window.location.href = "terminal://";
-                            } catch {
-                                // fallback
-                            }
-                        }}
+                        onClick={launchNow}
                     >
                         Launch now
                     </Button>

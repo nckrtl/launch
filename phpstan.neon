@@ -4,4 +4,6 @@ includes:
 parameters:
     paths:
         - app/
+        - scripts/PestRunner.php
+        - scripts/BrowserTestRunner.php
     level: 9

@@ -1,19 +1,19 @@
-# Craft Starterkit React
+# Launch Starter Kit
 
-Laravel 13 + Launch Laravel + React 19 + Inertia v3 + VitePlus + Tailwind CSS v4.2 + shadcn
+Laravel 13 + Launch Laravel + React 19 + Inertia v3 + VitePlus + Tailwind CSS v4 + shadcn
 
 ## Stack
 
 - **Backend**: Laravel 13, Launch Laravel, PHP 8.4+
-- **Frontend**: React 19, TypeScript 5.9
+- **Frontend**: React 19, TypeScript 7
 - **SPA bridge**: Inertia.js v3 with SSR
-- **Styling**: Tailwind CSS v4.2 with `tw-animate-css` and `shadcn/tailwind.css`
+- **Styling**: Tailwind CSS v4 with `tw-animate-css` and `shadcn/tailwind.css`
 - **Components**: shadcn base-nova components backed by Base UI (`@base-ui/react`)
 - **Icons**: Lucide React
 - **Toolchain**: VitePlus (Vite 8 + Oxc linting/formatting)
 - **Vite config**: `defineLaunchConfig()` from `@nckrtl/launch-ui/vite`
 
-Launch Laravel is expected as a sibling checkout at `../launch-laravel`. Use `composer link ../launch-laravel` after `composer install` so local package changes are used while developing the starter kit.
+The kit depends on `nckrtl/launch-laravel` from Packagist. To develop against a local checkout, use `composer link ../../packages/launch-laravel` after `composer install` — see "Working on the kit itself" in README.md, which is the source of truth for this workflow. `composer link` keeps `composer.json` and `composer.lock` untouched; `composer unlink <path>` restores the published package.
 
 ## Agent Skills
 
@@ -134,8 +134,8 @@ function LanguageSwitcher() {
 - `@launch` registry for layout components
 
 ```bash
-npx shadcn add button dialog         # shadcn components backed by Base UI primitives
-npx shadcn add @launch/app-sidebar-layout  # Layout from craft registry
+bunx shadcn add button dialog              # shadcn components backed by Base UI primitives
+bunx shadcn add @launch/app-sidebar-layout # Layout from the @launch registry
 ```
 
 ## Key Directories
@@ -148,7 +148,7 @@ app/
 resources/
   css/
     app.css               # Tailwind entrypoint
-    theme.css             # Design tokens (oklch colors, radii, fonts)
+    theme.css             # Design tokens (color variables, radii, fonts)
   js/
     app.tsx               # Inertia app entrypoint (minimal)
     actions/              # Wayfinder-generated action helpers
@@ -160,31 +160,63 @@ resources/
     routes/               # Wayfinder-generated route helpers
   views/
     app.blade.php         # Root Blade template (Inertia v3 syntax)
+  markdown/               # Agent-facing docs served by AgentDocsController:
+                          #   /llms.txt, /create.md, /conventions.md, /herd.md,
+                          #   /orbit.md, /solo.md — edit the Markdown, no rebuild
 lang/                     # Translation JSON files (when i18n enabled)
 ```
 
 ## Development
 
 ```bash
-composer dev              # Starts server, queue, logs, and vite concurrently
+composer dev              # Server, queue, logs, and vite — only when nothing else serves the app
 vp dev                    # VitePlus dev server only
-vp build                  # Production build
+bun run build             # Production build: vp build && vp build --ssr
+vp build                  # Client build only (no SSR bundle)
 vp check                  # Lint + format (Oxc)
 vp check --fix            # Auto-fix
-composer test             # Pest tests
+composer test             # Pest tests (Unit + Feature suites) via scripts/run-pest.php:
+                          #   full suite until the repo has a first commit, --tia after
+composer test:browser     # bun run build, then Pest browser tests (tests/Browser)
 composer lint             # Pint (PHP formatting)
 composer analyse          # PHPStan level 9
 composer rector           # Rector code upgrades
-composer check            # test + analyse + vp check
+composer check            # test + analyse + vp check + test:browser
 composer fix              # rector + lint + vp check --fix
 ```
 
+Under Herd or Orbit the app is already served — do not run `composer dev` or
+`php artisan serve` there. README.md and the environment addenda in
+`resources/markdown/environments/` are the source of truth for how the app and
+its long-running processes are run per environment.
+
+### SSR
+
+Production SSR is enabled: `bun run build` builds the SSR bundle, and its port
+is pinned to 13719 in `vite.config.ts` (no env override exists — read the
+comment there before changing it). Feature tests deliberately disable SSR and
+Vite (`tests/Pest.php` sets `inertia.ssr.enabled=false` and calls
+`withoutVite()`) so they stay deterministic — passing Feature tests therefore
+prove nothing about SSR. Do not "fix" tests by re-enabling SSR in them, and do
+not treat the test suite as SSR coverage.
+
 ## Code Quality
 
-- **PHP**: Pest v4, PHPStan level 9, Pint, Rector
-- **Browser tests**: Pest Browser for user-visible UI workflows in `tests/Browser/`
+- **PHP**: Pest v5, PHPStan level 9, Pint, Rector
+- **Browser tests**: Pest Browser v5 for user-visible UI workflows in `tests/Browser/`.
+  Note: `tests/Browser/` is not part of the phpunit.xml testsuites, so `composer test`
+  does not run it — run `composer test:browser` (builds assets first) or
+  `vendor/bin/pest tests/Browser` against an existing build. The `playwright` npm package
+  is already a devDependency (installed by `bun install`), but the Chromium binary is a
+  separate one-time install: `bunx playwright install chromium`. Without it, browser
+  tests — and therefore `composer check` — fail on a fresh machine
 - **JS/TS**: VitePlus (Oxc linting + formatting)
-- **Git hooks**: Git config-based hooks — pre-commit (lint + check), pre-push (test + analyse)
+- **Git hooks**: committed `.vite-hooks/` scripts, installed by `vp config` (run
+  automatically by `bun install` via the package.json `prepare` script), which points
+  `core.hooksPath` at the VitePlus dispatcher. Pre-commit runs `vp staged` (the `staged`
+  tasks in `vite.config.ts` against staged files); pre-push runs
+  `composer test && composer analyse`. Skip once with `VP_GIT_HOOKS=0`. Do not configure
+  `hook.*` git config keys — nothing reads them
 - **CSP**: Spatie laravel-csp with Basic + Development presets
 
 ## Feature Completion Gates
@@ -194,7 +226,7 @@ Every feature must include automated test coverage before it is reported as done
 - Backend/domain behavior requires focused PHP feature or unit tests.
 - Inertia page responses require Inertia assertions for the expected component and props.
 - Any user-visible UI workflow requires a Pest Browser test in `tests/Browser/`.
-- Any UI-affecting change must also be manually verified in the Codex in-app browser with `agent-browser`, including checking browser console errors.
+- Any UI-affecting change must also be manually verified in a real browser using the agent's browser tooling (the `agent-browser` CLI/skill or equivalent), including checking browser console errors.
 - Completion reports must list the exact tests and browser validation that passed.
 - If browser testing or browser validation is skipped, the report must explicitly state why the change has no user-visible UI surface.
 

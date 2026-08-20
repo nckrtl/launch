@@ -62,8 +62,8 @@ gives you two incompatible primitive layers.
 
 ## Styling
 
-Design tokens live in `resources/css/theme.css` as oklch values. Put new tokens there rather
-than scattering literal colors through components.
+Design tokens live in `resources/css/theme.css` as CSS custom properties. Put new tokens
+there rather than scattering literal colors through components.
 
 ## Pages
 
@@ -89,16 +89,22 @@ import { __ } from "@nckrtl/launch-ui/i18n";
 
 ## Commands
 
-| Command            | Does                                   |
-| ------------------ | -------------------------------------- |
-| `composer dev`     | Server, queue, logs, and Vite together |
-| `composer test`    | Pest test suite                        |
-| `composer analyse` | PHPStan at level 9                     |
-| `composer lint`    | Pint (PHP formatting)                  |
-| `composer check`   | test + analyse + frontend lint         |
-| `composer fix`     | Rector + Pint + frontend autofix       |
-| `bun run dev`      | Vite dev server only                   |
-| `bun run build`    | Production build                       |
+| Command                 | Does                                                                                                                 |
+| ----------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `composer dev`          | Server, queue, logs, and Vite together                                                                               |
+| `composer test`         | Pest tests — full suite before the repo's first commit, test-impact analysis (`--tia`) once a baseline commit exists |
+| `composer test:browser` | Builds assets, then runs Pest browser tests (`tests/Browser`)                                                        |
+| `composer analyse`      | PHPStan at level 9                                                                                                   |
+| `composer lint`         | Pint (PHP formatting)                                                                                                |
+| `composer check`        | test + analyse + frontend lint + browser tests                                                                       |
+| `composer fix`          | Rector + Pint + frontend autofix                                                                                     |
+| `bun run dev`           | Vite dev server only                                                                                                 |
+| `bun run build`         | Production build (client + SSR bundles)                                                                              |
+
+Browser tests drive a real Chromium through Playwright. The `playwright` npm package ships
+as a devDependency, but the browser binary is a separate one-time install:
+`bunx playwright install chromium`. Without it, `composer test:browser` — and therefore
+`composer check` — fails.
 
 `composer dev` does not exit. Never run it as a blocking foreground step in an automated flow.
 

@@ -1,6 +1,7 @@
 import React from "react";
 import { Frame, SectionDivider, SectionHeader, useBP } from "@/components/launch/grid";
 import { LaunchIcon } from "@/components/launch/icons";
+import { LayerChip } from "@/components/launch/layer-chip";
 import { useAppearance } from "@/hooks/use-appearance";
 
 export const LAYERS: [string | null, string, string, string[], string][] = [
@@ -102,16 +103,6 @@ export const LAYERS: [string | null, string, string, string[], string][] = [
         "#10B981",
     ],
 ];
-
-const LRGBA = (h: string, a: number) => {
-    const n = parseInt(h.slice(1), 16);
-    return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${a})`;
-};
-
-const LSTRIPE = (c: string) =>
-    `url("data:image/svg+xml,${encodeURIComponent(
-        `<svg xmlns='http://www.w3.org/2000/svg' width='4' height='4'><path d='M-1,1 l2,-2 M0,4 l4,-4 M3,5 l2,-2' stroke='${c}' stroke-width='1'/></svg>`,
-    )}")`;
 
 function ScrollList({ items, color, dur = 16 }: { items: string[]; color?: string; dur?: number }) {
     const mob = useBP() === 0;
@@ -226,129 +217,34 @@ function StackSlider({
                     width: "max-content",
                 }}
             >
-                {LAYERS.map(([logo, name, , , color], i) => {
-                    const isAct = act === i;
-                    const activeBg = isDark ? LRGBA(color, 0.12) : color;
-                    const activeBorder = isDark ? LRGBA(color, 0.18) : color;
-                    const activeStripe = isDark
-                        ? LSTRIPE(LRGBA(color, 0.22))
-                        : LSTRIPE(
-                              color === "#58C4DC" || color === "#00BAFF"
-                                  ? "rgba(0, 0, 0, 0.12)"
-                                  : "rgba(255, 255, 255, 0.25)",
-                          );
-                    const textColor = isAct
-                        ? isDark
-                            ? "var(--foreground)"
-                            : "#ffffff"
-                        : "var(--muted-foreground)";
-                    const numColor = isAct
-                        ? isDark
-                            ? color
-                            : "#ffffff"
-                        : "var(--faint-foreground)";
-
-                    return (
-                        <div
-                            key={name}
+                {LAYERS.map(([logo, name, , , color], i) => (
+                    <div
+                        key={name}
+                        style={{
+                            scrollSnapAlign: "center",
+                            flex: "none",
+                            width: W,
+                        }}
+                    >
+                        <LayerChip
                             ref={(el) => {
                                 items.current[i] = el;
                             }}
+                            index={i}
+                            name={name}
+                            logo={logo}
+                            color={color}
+                            isActive={act === i}
+                            isDark={isDark}
+                            inactiveOpacity={0.65}
+                            padding="0 13px"
                             onClick={() => {
                                 onUser();
                                 onPick(i);
                             }}
-                            style={{
-                                scrollSnapAlign: "center",
-                                flex: "none",
-                                width: W,
-                                position: "relative",
-                                height: 44,
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "space-between",
-                                padding: "0 13px",
-                                boxSizing: "border-box",
-                                cursor: "pointer",
-                                border: "1px solid",
-                                borderColor: isAct ? activeBorder : "var(--grid-line)",
-                                backgroundColor: isAct ? activeBg : "var(--surface-card)",
-                                backgroundImage: isAct ? activeStripe : "none",
-                                borderRadius: 2,
-                                transition: "all .25s var(--ease-out)",
-                                boxShadow:
-                                    isAct && isDark ? `0 0 26px ${LRGBA(color, 0.25)}` : "none",
-                                opacity: isAct ? 1 : 0.65,
-                            }}
-                        >
-                            {["tl", "tr", "bl", "br"].map((at) => {
-                                const bb = `1px solid ${color}`;
-                                const cs: React.CSSProperties = {
-                                    position: "absolute",
-                                    width: 5,
-                                    height: 5,
-                                    pointerEvents: "none",
-                                    opacity: isAct && isDark ? 1 : 0,
-                                    transition: "opacity .25s var(--ease-out)",
-                                };
-                                if (at[0] === "t") Object.assign(cs, { top: -1, borderTop: bb });
-                                else Object.assign(cs, { bottom: -1, borderBottom: bb });
-                                if (at[1] === "l") Object.assign(cs, { left: -1, borderLeft: bb });
-                                else Object.assign(cs, { right: -1, borderRight: bb });
-                                cs[
-                                    `border${at[0] === "t" ? "Top" : "Bottom"}${at[1] === "l" ? "Left" : "Right"}Radius`
-                                ] = 2;
-                                return <span key={at} style={cs} />;
-                            })}
-                            <span
-                                style={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    gap: 8,
-                                    minWidth: 0,
-                                }}
-                            >
-                                {logo && (
-                                    <img
-                                        src={`/assets/logos/${logo}.svg`}
-                                        width="12"
-                                        height="12"
-                                        alt=""
-                                        style={{
-                                            flex: "none",
-                                            opacity: isAct ? 1 : 0.85,
-                                            filter:
-                                                isAct && !isDark
-                                                    ? "brightness(0) invert(1)"
-                                                    : "none",
-                                            transition: "all .25s var(--ease-out)",
-                                        }}
-                                    />
-                                )}
-                                <span
-                                    className="mono-label"
-                                    style={{
-                                        fontSize: 10,
-                                        whiteSpace: "nowrap",
-                                        color: textColor,
-                                    }}
-                                >
-                                    {name}
-                                </span>
-                            </span>
-                            <span
-                                className="mono-label"
-                                style={{
-                                    fontSize: 10,
-                                    color: numColor,
-                                    transition: "color .25s var(--ease-out)",
-                                }}
-                            >
-                                0{i + 1}
-                            </span>
-                        </div>
-                    );
-                })}
+                        />
+                    </div>
+                ))}
             </div>
         </div>
     );
@@ -363,14 +259,72 @@ export function StackSection() {
     const up = st.act > st.prev;
     const go = (i: number) => setSt((o) => (o.act === i ? o : { act: i, prev: o.act }));
     const [auto, setAuto] = React.useState(true);
+    const desktopTabRefs = React.useRef<(HTMLDivElement | null)[]>([]);
+
+    const handleDesktopTabKeyDown = (e: React.KeyboardEvent, currentI: number) => {
+        const visualOrder = LAYERS.map((_, idx) => idx).reverse();
+        const pos = visualOrder.indexOf(currentI);
+        let targetI: number | null = null;
+
+        if (e.key === "ArrowDown" || e.key === "ArrowRight") {
+            e.preventDefault();
+            const nextPos = (pos + 1) % visualOrder.length;
+            targetI = visualOrder[nextPos];
+        } else if (e.key === "ArrowUp" || e.key === "ArrowLeft") {
+            e.preventDefault();
+            const prevPos = (pos - 1 + visualOrder.length) % visualOrder.length;
+            targetI = visualOrder[prevPos];
+        } else if (e.key === "Home") {
+            e.preventDefault();
+            targetI = visualOrder[0];
+        } else if (e.key === "End") {
+            e.preventDefault();
+            targetI = visualOrder[visualOrder.length - 1];
+        } else if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            go(currentI);
+            setAuto(false);
+            return;
+        }
+
+        if (targetI !== null) {
+            go(targetI);
+            setAuto(false);
+            desktopTabRefs.current[targetI]?.focus();
+        }
+    };
 
     React.useEffect(() => {
         if (!auto) return;
-        const iv = setInterval(
-            () => setSt((o) => ({ act: (o.act + 1) % LAYERS.length, prev: o.act })),
-            3200,
-        );
-        return () => clearInterval(iv);
+        let iv: any;
+        const start = () => {
+            if (!iv && document.visibilityState !== "hidden") {
+                iv = setInterval(
+                    () => setSt((o) => ({ act: (o.act + 1) % LAYERS.length, prev: o.act })),
+                    3200,
+                );
+            }
+        };
+        const stop = () => {
+            if (iv) {
+                clearInterval(iv);
+                iv = null;
+            }
+        };
+        const onVisibilityChange = () => {
+            if (document.visibilityState === "hidden") {
+                stop();
+            } else {
+                start();
+            }
+        };
+
+        start();
+        document.addEventListener("visibilitychange", onVisibilityChange);
+        return () => {
+            stop();
+            document.removeEventListener("visibilitychange", onVisibilityChange);
+        };
     }, [auto]);
 
     return (
@@ -385,24 +339,26 @@ export function StackSection() {
                         pointerEvents: "none",
                     }}
                 >
-                    {LAYERS.map(([logo], i) => (
-                        <img
-                            key={(logo || "layer") + i}
-                            src={logo ? `/assets/logos/${logo}.svg` : ""}
-                            alt=""
-                            style={{
-                                position: "absolute",
-                                left: "50%",
-                                top: "50%",
-                                transform: "translate(-50%,-50%)",
-                                height: mob ? 420 : 880,
-                                width: "auto",
-                                opacity: act === i && logo ? (isDark ? 0.016 : 0.065) : 0,
-                                filter: isDark ? "brightness(0) invert(1)" : "none",
-                                transition: "opacity .5s var(--ease-out)",
-                            }}
-                        />
-                    ))}
+                    {LAYERS.map(([logo], i) =>
+                        logo ? (
+                            <img
+                                key={logo + i}
+                                src={`/assets/logos/${logo}.svg`}
+                                alt=""
+                                style={{
+                                    position: "absolute",
+                                    left: "50%",
+                                    top: "50%",
+                                    transform: "translate(-50%,-50%)",
+                                    height: mob ? 420 : 880,
+                                    width: "auto",
+                                    opacity: act === i ? (isDark ? 0.016 : 0.065) : 0,
+                                    filter: isDark ? "brightness(0) invert(1)" : "none",
+                                    transition: "opacity .5s var(--ease-out)",
+                                }}
+                            />
+                        ) : null,
+                    )}
                 </div>
                 <SectionHeader
                     eyebrow="The stack"
@@ -421,6 +377,9 @@ export function StackSection() {
                 >
                     {!mob && (
                         <div
+                            role="tablist"
+                            aria-orientation="vertical"
+                            aria-label="Stack technologies"
                             style={{
                                 display: "grid",
                                 gap: 0,
@@ -437,33 +396,28 @@ export function StackSection() {
                                 .reverse()
                                 .map(({ l: [logo, name, , , color], i }, idx) => {
                                     const isAct = act === i;
-                                    const activeBg = isDark ? LRGBA(color, 0.12) : color;
-                                    const activeBorder = isDark ? LRGBA(color, 0.18) : color;
-                                    const activeStripe = isDark
-                                        ? LSTRIPE(LRGBA(color, 0.22))
-                                        : LSTRIPE(
-                                              color === "#58C4DC" || color === "#00BAFF"
-                                                  ? "rgba(0, 0, 0, 0.12)"
-                                                  : "rgba(255, 255, 255, 0.25)",
-                                          );
-                                    const textColor = isAct
-                                        ? isDark
-                                            ? "var(--foreground)"
-                                            : "#ffffff"
-                                        : "var(--muted-foreground)";
-                                    const numColor = isAct
-                                        ? isDark
-                                            ? color
-                                            : "#ffffff"
-                                        : "var(--faint-foreground)";
-
                                     return (
                                         <div
                                             key={name}
+                                            ref={(el) => {
+                                                desktopTabRefs.current[i] = el;
+                                            }}
+                                            role="tab"
+                                            id={`stack-tab-${i}`}
+                                            aria-controls={`stack-panel-${i}`}
+                                            aria-selected={isAct}
+                                            aria-label={name}
+                                            tabIndex={isAct ? 0 : -1}
+                                            onClick={() => {
+                                                go(i);
+                                                setAuto(false);
+                                            }}
+                                            onKeyDown={(e) => handleDesktopTabKeyDown(e, i)}
                                             onMouseEnter={() => {
                                                 go(i);
                                                 setAuto(false);
                                             }}
+                                            className="focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--primary)]"
                                             style={{
                                                 width: "100%",
                                                 borderTop: idx
@@ -474,130 +428,42 @@ export function StackSection() {
                                                 cursor: "pointer",
                                             }}
                                         >
-                                            <div
-                                                style={{
-                                                    position: "relative",
-                                                    height: 44,
-                                                    display: "flex",
-                                                    alignItems: "center",
-                                                    justifyContent: "space-between",
-                                                    padding: "0 16px",
-                                                    boxSizing: "border-box",
-                                                    border: "1px solid",
-                                                    borderColor: isAct
-                                                        ? activeBorder
-                                                        : "transparent",
-                                                    backgroundColor: isAct
-                                                        ? activeBg
-                                                        : "transparent",
-                                                    backgroundImage: isAct ? activeStripe : "none",
-                                                    borderRadius: 2,
-                                                    transition: "all .25s var(--ease-out)",
-                                                    boxShadow:
-                                                        isAct && isDark
-                                                            ? `0 0 26px ${LRGBA(color, 0.25)}`
-                                                            : "none",
-                                                }}
-                                            >
-                                                {["tl", "tr", "bl", "br"].map((at) => {
-                                                    const bb = `1px solid ${color}`;
-                                                    const cs: React.CSSProperties = {
-                                                        position: "absolute",
-                                                        width: 5,
-                                                        height: 5,
-                                                        pointerEvents: "none",
-                                                        opacity: isAct && isDark ? 1 : 0,
-                                                        transition: "opacity .25s var(--ease-out)",
-                                                    };
-                                                    if (at[0] === "t")
-                                                        Object.assign(cs, {
-                                                            top: -1,
-                                                            borderTop: bb,
-                                                        });
-                                                    else
-                                                        Object.assign(cs, {
-                                                            bottom: -1,
-                                                            borderBottom: bb,
-                                                        });
-                                                    if (at[1] === "l")
-                                                        Object.assign(cs, {
-                                                            left: -1,
-                                                            borderLeft: bb,
-                                                        });
-                                                    else
-                                                        Object.assign(cs, {
-                                                            right: -1,
-                                                            borderRight: bb,
-                                                        });
-                                                    cs[
-                                                        `border${at[0] === "t" ? "Top" : "Bottom"}${at[1] === "l" ? "Left" : "Right"}Radius`
-                                                    ] = 2;
-                                                    return <span key={at} style={cs} />;
-                                                })}
-                                                <span
-                                                    style={{
-                                                        display: "flex",
-                                                        alignItems: "center",
-                                                        gap: 8,
-                                                    }}
-                                                >
-                                                    {logo && (
-                                                        <img
-                                                            src={`/assets/logos/${logo}.svg`}
-                                                            width="12"
-                                                            height="12"
-                                                            alt=""
-                                                            style={{
-                                                                opacity: isAct ? 1 : 0.85,
-                                                                filter:
-                                                                    isAct && !isDark
-                                                                        ? "brightness(0) invert(1)"
-                                                                        : "none",
-                                                                transition:
-                                                                    "all .25s var(--ease-out)",
-                                                            }}
-                                                        />
-                                                    )}
-                                                    <span
-                                                        className="mono-label"
-                                                        style={{
-                                                            fontSize: 10,
-                                                            color: textColor,
-                                                        }}
-                                                    >
-                                                        {name}
-                                                    </span>
-                                                </span>
-                                                <span
-                                                    className="mono-label"
-                                                    style={{
-                                                        fontSize: 10,
-                                                        color: numColor,
-                                                        transition: "color .25s var(--ease-out)",
-                                                    }}
-                                                >
-                                                    0{i + 1}
-                                                </span>
-                                            </div>
+                                            <LayerChip
+                                                index={i}
+                                                name={name}
+                                                logo={logo}
+                                                color={color}
+                                                isActive={isAct}
+                                                isDark={isDark}
+                                                padding="0 16px"
+                                                borderColor={isAct ? undefined : "transparent"}
+                                                backgroundColor={isAct ? undefined : "transparent"}
+                                                tabIndex={-1}
+                                            />
                                         </div>
                                     );
                                 })}
                         </div>
                     )}
                     <div style={{ position: "relative", minHeight: mob ? 286 : undefined }}>
-                        {LAYERS.map(([, name, desc, feats, color], i) => (
-                            <div
-                                key={name}
-                                style={{
-                                    position: "absolute",
-                                    inset: 0,
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    justifyContent: mob ? "flex-start" : "center",
-                                    alignItems: "flex-start",
-                                    opacity: act === i ? 1 : 0,
-                                    transform:
-                                        act === i
+                        {LAYERS.map(([, name, desc, feats, color], i) => {
+                            const isAct = act === i;
+                            return (
+                                <div
+                                    key={name}
+                                    id={mob ? undefined : `stack-panel-${i}`}
+                                    role={mob ? undefined : "tabpanel"}
+                                    aria-labelledby={mob ? undefined : `stack-tab-${i}`}
+                                    aria-hidden={!isAct}
+                                    style={{
+                                        position: "absolute",
+                                        inset: 0,
+                                        display: "flex",
+                                        flexDirection: "column",
+                                        justifyContent: mob ? "flex-start" : "center",
+                                        alignItems: "flex-start",
+                                        opacity: isAct ? 1 : 0,
+                                        transform: isAct
                                             ? "translateY(0)"
                                             : st.prev === i
                                               ? up
@@ -606,37 +472,38 @@ export function StackSection() {
                                               : up
                                                 ? "translateY(-16px)"
                                                 : "translateY(16px)",
-                                    transition:
-                                        "opacity .4s var(--ease-out), transform .4s var(--ease-out)",
-                                    pointerEvents: act === i ? "auto" : "none",
-                                }}
-                            >
-                                <div className="mono-label" style={{ color, marginBottom: 12 }}>
-                                    LAYER 0{i + 1}
+                                        transition:
+                                            "opacity .4s var(--ease-out), transform .4s var(--ease-out)",
+                                        pointerEvents: isAct ? "auto" : "none",
+                                    }}
+                                >
+                                    <div className="mono-label" style={{ color, marginBottom: 12 }}>
+                                        LAYER 0{i + 1}
+                                    </div>
+                                    <h3
+                                        style={{
+                                            fontSize: mob ? 21 : 24,
+                                            fontWeight: 500,
+                                            letterSpacing: "-0.02em",
+                                        }}
+                                    >
+                                        {name}
+                                    </h3>
+                                    <p
+                                        style={{
+                                            fontSize: mob ? 14.5 : 15,
+                                            color: "var(--muted-foreground)",
+                                            lineHeight: 1.65,
+                                            marginTop: 10,
+                                            textWrap: "pretty",
+                                        }}
+                                    >
+                                        {desc}
+                                    </p>
+                                    {feats && <ScrollList items={feats} color={color} />}
                                 </div>
-                                <h3
-                                    style={{
-                                        fontSize: mob ? 21 : 24,
-                                        fontWeight: 500,
-                                        letterSpacing: "-0.02em",
-                                    }}
-                                >
-                                    {name}
-                                </h3>
-                                <p
-                                    style={{
-                                        fontSize: mob ? 14.5 : 15,
-                                        color: "var(--muted-foreground)",
-                                        lineHeight: 1.65,
-                                        marginTop: 10,
-                                        textWrap: "pretty",
-                                    }}
-                                >
-                                    {desc}
-                                </p>
-                                {feats && <ScrollList items={feats} color={color} />}
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
                     {mob && <StackSlider act={act} onPick={go} onUser={() => setAuto(false)} />}
                 </div>

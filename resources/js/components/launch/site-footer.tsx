@@ -4,7 +4,7 @@ import { Frame, SectionDivider, useBP } from "@/components/launch/grid";
 
 const FOOTER_LINKS: [string, string][] = [
     ["GitHub", "https://github.com/nckrtl/launch-starter-kit"],
-    ["Docs", "#docs"],
+    ["Docs", "/create.md"],
     ["launch-ui", "#library"],
     ["nckrtl.com", "https://nckrtl.com"],
 ];
@@ -46,7 +46,7 @@ export function SiteFooter() {
                             style={{
                                 fontFamily: "var(--font-mono)",
                                 fontSize: 12,
-                                color: "var(--faint-foreground)",
+                                color: "var(--muted-foreground)",
                                 textDecoration: "none",
                             }}
                             className="hover:text-accent transition-colors duration-150"
@@ -62,7 +62,7 @@ export function SiteFooter() {
                     style={{
                         fontFamily: "var(--font-mono)",
                         fontSize: 11,
-                        color: "var(--neutral-600)",
+                        color: "var(--muted-foreground)",
                     }}
                 >
                     MIT licensed · built by{" "}

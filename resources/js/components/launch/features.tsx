@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { IconTile } from "@/components/launch/brand";
 import { CellMark, Frame, SectionDivider, SectionHeader, useBP } from "@/components/launch/grid";
 import { LaunchIcon } from "@/components/launch/icons";
+import { Marquee } from "@/components/launch/marquee";
 
 const MOB_MARKS: Record<string, string> = { tl: "tbr", tr: "tbl" };
 
@@ -27,7 +28,8 @@ function Tile({
     marks?: Record<string, string>;
 }) {
     const [hov, setHov] = React.useState(false);
-    const mob = useBP() === 0;
+    const bp = useBP();
+    const mob = bp === 0;
     const mk = mob ? MOB_MARKS : marks;
 
     return (
@@ -92,16 +94,27 @@ const authSlides = () => [
         el: (
             <div style={{ display: "grid", gap: 10 }}>
                 <div style={{ display: "grid", gap: 6 }}>
-                    <label style={{ fontSize: 12, fontWeight: 500, color: "var(--foreground)" }}>
+                    <label
+                        htmlFor="auth-email-input"
+                        style={{ fontSize: 12, fontWeight: 500, color: "var(--foreground)" }}
+                    >
                         Email address
                     </label>
-                    <Input defaultValue="sam@myapp.test" readOnly />
+                    <Input id="auth-email-input" defaultValue="sam@myapp.test" readOnly />
                 </div>
                 <div style={{ display: "grid", gap: 6 }}>
-                    <label style={{ fontSize: 12, fontWeight: 500, color: "var(--foreground)" }}>
+                    <label
+                        htmlFor="auth-password-input"
+                        style={{ fontSize: 12, fontWeight: 500, color: "var(--foreground)" }}
+                    >
                         Password
                     </label>
-                    <Input type="password" defaultValue="password123" readOnly />
+                    <Input
+                        id="auth-password-input"
+                        type="password"
+                        defaultValue="password123"
+                        readOnly
+                    />
                 </div>
                 <div
                     style={{
@@ -111,23 +124,26 @@ const authSlides = () => [
                         marginTop: 2,
                     }}
                 >
-                    <span
+                    <label
+                        htmlFor="auth-remember-checkbox"
                         style={{
                             display: "flex",
                             alignItems: "center",
                             gap: 8,
                             fontSize: 12,
                             color: "var(--muted-foreground)",
+                            cursor: "pointer",
                         }}
                     >
                         <input
+                            id="auth-remember-checkbox"
                             type="checkbox"
                             defaultChecked
                             readOnly
                             style={{ accentColor: "var(--accent)" }}
                         />
                         Remember me
-                    </span>
+                    </label>
                     <Button size="sm">Sign in</Button>
                 </div>
             </div>
@@ -255,8 +271,32 @@ function AuthShow() {
     const inset = mob ? "-30px -16px" : "-40px -36px";
 
     React.useEffect(() => {
-        const iv = setInterval(() => setI((v) => (v + 1) % AUTH_SLIDES.length), 5200);
-        return () => clearInterval(iv);
+        let iv: any;
+        const start = () => {
+            if (!iv && document.visibilityState !== "hidden") {
+                iv = setInterval(() => setI((v) => (v + 1) % AUTH_SLIDES.length), 5200);
+            }
+        };
+        const stop = () => {
+            if (iv) {
+                clearInterval(iv);
+                iv = null;
+            }
+        };
+        const onVisibilityChange = () => {
+            if (document.visibilityState === "hidden") {
+                stop();
+            } else {
+                start();
+            }
+        };
+
+        start();
+        document.addEventListener("visibilitychange", onVisibilityChange);
+        return () => {
+            stop();
+            document.removeEventListener("visibilitychange", onVisibilityChange);
+        };
     }, [AUTH_SLIDES.length]);
 
     return (
@@ -273,6 +313,8 @@ function AuthShow() {
                 {AUTH_SLIDES.map((s, k) => (
                     <div
                         key={s.k}
+                        aria-hidden={i !== k}
+                        inert={i !== k ? true : undefined}
                         style={{
                             position: "absolute",
                             inset: 0,
@@ -282,7 +324,7 @@ function AuthShow() {
                             transform: i === k ? "translateY(0)" : "translateY(10px)",
                             transition:
                                 "opacity .7s var(--ease-out), transform .7s var(--ease-out)",
-                            pointerEvents: "none",
+                            pointerEvents: i === k ? "auto" : "none",
                         }}
                     >
                         <div
@@ -1197,54 +1239,21 @@ function AuthTicker() {
     );
 
     return (
-        <div
+        <Marquee
+            duration="50s"
+            fadeWidth={90}
+            maskGradient="linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent)"
             style={{
                 position: "absolute",
                 left: 0,
                 right: 0,
                 bottom: 0,
-                overflow: "hidden",
-                background: "var(--marquee-bg)",
                 borderTop: "1px solid var(--grid-line)",
-                WebkitMaskImage: "linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent)",
-                maskImage: "linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent)",
             }}
         >
-            <div
-                style={{
-                    display: "flex",
-                    gap: 0,
-                    width: "max-content",
-                    animation: "marquee 50s linear infinite",
-                }}
-            >
-                {AUTH_FEATS.map((t, i) => chip(t, i))}
-                {AUTH_FEATS.map((t, i) => chip(t, "b" + i))}
-            </div>
-            {["left", "right"].map((sd) =>
-                [
-                    [2, "#000 0%, rgba(0,0,0,0) 55%"],
-                    [5, "#000 0%, rgba(0,0,0,0) 35%"],
-                    [10, "#000 0%, rgba(0,0,0,0) 20%"],
-                ].map(([b, m]: [number, string]) => (
-                    <div
-                        key={sd + b}
-                        style={{
-                            position: "absolute",
-                            top: 0,
-                            bottom: 0,
-                            [sd]: 0,
-                            width: 90,
-                            pointerEvents: "none",
-                            backdropFilter: `blur(${b}px)`,
-                            WebkitBackdropFilter: `blur(${b}px)`,
-                            WebkitMaskImage: `linear-gradient(${sd === "left" ? 90 : 270}deg, ${m})`,
-                            maskImage: `linear-gradient(${sd === "left" ? 90 : 270}deg, ${m})`,
-                        }}
-                    />
-                )),
-            )}
-        </div>
+            {AUTH_FEATS.map((t, i) => chip(t, i))}
+            {AUTH_FEATS.map((t, i) => chip(t, "b" + i))}
+        </Marquee>
     );
 }
 

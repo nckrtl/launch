@@ -54,12 +54,12 @@ These have no dependencies. Run them concurrently instead of in sequence:
 
 Fan out. Nothing here depends on anything else here:
 
-| Task                                    | Owner           | Produces               |
-| --------------------------------------- | --------------- | ---------------------- |
-| `bun install`                           | subagent        | —                      |
-| register the site (Herd/Orbit addendum) | subagent        | the app URL for `.env` |
-| git hooks (step 5)                      | subagent        | —                      |
-| ask the user for the project name       | **main thread** | `APP_NAME` for `.env`  |
+| Task                                              | Owner           | Produces               |
+| ------------------------------------------------- | --------------- | ---------------------- |
+| `bun install && bunx playwright install chromium` | subagent        | —                      |
+| register the site (Herd/Orbit addendum)           | subagent        | the app URL for `.env` |
+| git hooks (step 5)                                | subagent        | —                      |
+| ask the user for the project name                 | **main thread** | `APP_NAME` for `.env`  |
 
 Ask your questions while those run. That is the point — the main thread should never sit idle
 waiting on `bun install`.
@@ -167,14 +167,27 @@ VITE_APP_URL=http://localhost:8000
 
 ```bash
 bun install
+bunx playwright install chromium
 bun run build
 ```
 
-## 5. Git hooks — nothing to do
+The `playwright` npm package comes in with `bun install`, but the Chromium binary it drives
+is a separate one-time download. Pest browser tests (`composer test:browser`, also part of
+`composer check`) fail without it.
 
-`bun install` in step 4 already installed them. It runs `vp config` via the package.json
-`prepare` script, which points `core.hooksPath` at VitePlus's dispatcher; that dispatcher runs
-the committed `.vite-hooks/pre-commit` and `.vite-hooks/pre-push` scripts.
+## 5. Git hooks
+
+`bun install` in step 4 runs `vp config` via the package.json `prepare` script, which points
+`core.hooksPath` at VitePlus's dispatcher; that dispatcher runs the committed
+`.vite-hooks/pre-commit` and `.vite-hooks/pre-push` scripts.
+
+`composer create-project` from a dist or local path artifact does not create a git repository,
+and `vp config` cannot install hooks until one exists. If `.git` is missing after step 1:
+
+```bash
+git init -b main
+vp config
+```
 
 Pre-commit runs the `staged` tasks from `vite.config.ts` against staged files and re-stages
 what they fix. Pre-push runs `composer test && composer analyse`. Prefix a command with

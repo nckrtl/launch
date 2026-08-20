@@ -26,7 +26,11 @@ class AppServiceProvider extends ServiceProvider
         Model::preventAccessingMissingAttributes();
         Model::unguard();
 
-        if (app()->isProduction()) {
+        if ($this->app->environment('testing')) {
+            Vite::useHotFile(storage_path('framework/testing/vite.hot'));
+        }
+
+        if ($this->app->isProduction()) {
             Vite::prefetch();
         }
     }

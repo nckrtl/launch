@@ -4,21 +4,24 @@ import { cn } from "@/lib/utils";
 export const COL: React.CSSProperties = { maxWidth: 1400, margin: "0 auto", position: "relative" };
 export const MOBW: React.CSSProperties = { width: "calc(100% - 32px)" };
 
+function subscribeBP(callback: () => void) {
+    if (typeof window === "undefined") return () => {};
+    window.addEventListener("resize", callback);
+    return () => window.removeEventListener("resize", callback);
+}
+
+function getSnapshotBP(): 0 | 1 | 2 {
+    if (typeof window === "undefined") return 2;
+    const w = window.innerWidth;
+    return w < 760 ? 0 : w < 1080 ? 1 : 2;
+}
+
+function getServerSnapshotBP(): 0 | 1 | 2 {
+    return 2;
+}
+
 export function useBP(): 0 | 1 | 2 {
-    const get = (): 0 | 1 | 2 => {
-        if (typeof window === "undefined") return 2;
-        const w = window.innerWidth;
-        return w < 760 ? 0 : w < 1080 ? 1 : 2;
-    };
-    const [bp, setBp] = React.useState<0 | 1 | 2>(get);
-
-    React.useEffect(() => {
-        const on = () => setBp(get());
-        window.addEventListener("resize", on);
-        return () => window.removeEventListener("resize", on);
-    }, []);
-
-    return bp;
+    return React.useSyncExternalStore(subscribeBP, getSnapshotBP, getServerSnapshotBP);
 }
 
 export function Cross({ pos, on }: { pos: React.CSSProperties; on?: boolean }) {

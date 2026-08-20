@@ -1,8 +1,10 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { MARK_PATH } from "@/components/launch/brand";
+import { LaunchNowButton } from "@/components/launch/cta-button";
 import { Frame, useBP } from "@/components/launch/grid";
 import { LaunchIcon } from "@/components/launch/icons";
+import { Marquee } from "@/components/launch/marquee";
 import { AgentTerminal } from "@/components/launch/agent-terminal";
 
 const TECHS: [string | null, string][] = [
@@ -32,85 +34,41 @@ function TechMarquee({ mob }: { mob: boolean }) {
         borderRight: "1px solid var(--grid-line)",
     };
 
-    const row = TECHS.map(([f, name], i) => (
-        <span key={i} style={chipStyle}>
-            {f && (
-                <img
-                    src={`/assets/logos/${f}.svg`}
-                    width="12"
-                    height="12"
-                    alt={name}
-                    style={{ opacity: 0.75 }}
-                />
-            )}
-            <span className="mono-label" style={{ fontSize: 10 }}>
-                {name}
+    const renderChips = (keyPrefix: string) =>
+        TECHS.map(([f, name], i) => (
+            <span
+                key={`${keyPrefix}-${i}`}
+                style={chipStyle}
+                aria-hidden={keyPrefix !== "a" ? true : undefined}
+            >
+                {f && (
+                    <img
+                        src={`/assets/logos/${f}.svg`}
+                        width="12"
+                        height="12"
+                        alt=""
+                        style={{ opacity: 0.75 }}
+                    />
+                )}
+                <span className="mono-label" style={{ fontSize: 10 }}>
+                    {name}
+                </span>
             </span>
-        </span>
-    ));
+        ));
 
     return (
-        <div
+        <Marquee
+            duration="60s"
+            fadeWidth={130}
+            maskGradient="linear-gradient(90deg, transparent, #000 15%, #000 85%, transparent)"
             style={{
-                position: "relative",
                 margin: mob ? "-20px -16px 44px" : "-32px -32px 76px",
-                overflow: "hidden",
-                background: "var(--marquee-bg)",
                 borderBottom: "1px solid var(--grid-line)",
-                WebkitMaskImage: "linear-gradient(90deg,transparent,#000 15%,#000 85%,transparent)",
-                maskImage: "linear-gradient(90deg,transparent,#000 15%,#000 85%,transparent)",
             }}
         >
-            <div
-                style={{
-                    display: "flex",
-                    gap: 0,
-                    width: "max-content",
-                    animation: "marquee 60s linear infinite",
-                }}
-            >
-                {row}
-                {TECHS.map(([f, name], i) => (
-                    <span key={"b" + i} aria-hidden="true" style={chipStyle}>
-                        {f && (
-                            <img
-                                src={`/assets/logos/${f}.svg`}
-                                width="12"
-                                height="12"
-                                alt=""
-                                style={{ opacity: 0.75 }}
-                            />
-                        )}
-                        <span className="mono-label" style={{ fontSize: 10 }}>
-                            {name}
-                        </span>
-                    </span>
-                ))}
-            </div>
-            {["left", "right"].map((sd) =>
-                [
-                    [2, "#000 0%, rgba(0,0,0,0) 55%"],
-                    [5, "#000 0%, rgba(0,0,0,0) 35%"],
-                    [10, "#000 0%, rgba(0,0,0,0) 20%"],
-                ].map(([b, m]: [number, string]) => (
-                    <div
-                        key={sd + b}
-                        style={{
-                            position: "absolute",
-                            top: 0,
-                            bottom: 0,
-                            [sd]: 0,
-                            width: 130,
-                            pointerEvents: "none",
-                            backdropFilter: `blur(${b}px)`,
-                            WebkitBackdropFilter: `blur(${b}px)`,
-                            WebkitMaskImage: `linear-gradient(${sd === "left" ? 90 : 270}deg, ${m})`,
-                            maskImage: `linear-gradient(${sd === "left" ? 90 : 270}deg, ${m})`,
-                        }}
-                    />
-                )),
-            )}
-        </div>
+            {renderChips("a")}
+            {renderChips("b")}
+        </Marquee>
     );
 }
 
@@ -194,30 +152,6 @@ export function Hero() {
                     >
                         _
                     </span>
-                    <span
-                        aria-hidden="true"
-                        style={{
-                            position: "absolute",
-                            inset: 0,
-                            zIndex: 2,
-                            backgroundImage:
-                                "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.6'/%3E%3C/svg%3E\")",
-                            WebkitBackgroundClip: "text",
-                            backgroundClip: "text",
-                            color: "transparent",
-                            opacity: 0.55,
-                            mixBlendMode: "overlay",
-                            pointerEvents: "none",
-                            userSelect: "none",
-                            paddingRight: "0.15em",
-                            marginRight: "-0.15em",
-                        }}
-                    >
-                        Launch your next idea
-                        <br />
-                        faster than ever
-                        <span style={{ opacity: 0 }}>_</span>
-                    </span>
                 </h1>
                 <p
                     style={{
@@ -241,21 +175,7 @@ export function Hero() {
                         marginTop: mob ? 26 : 34,
                     }}
                 >
-                    <Button
-                        size="lg"
-                        style={{ padding: "0 18px" }}
-                        onClick={() => {
-                            const el = document.getElementById("agent-terminal");
-                            if (el) el.scrollIntoView({ behavior: "smooth" });
-                            try {
-                                window.location.href = "terminal://";
-                            } catch {
-                                // fallback
-                            }
-                        }}
-                    >
-                        Launch now <LaunchIcon name="arrow-right" size={15} />
-                    </Button>
+                    <LaunchNowButton />
                     <Button
                         size="lg"
                         variant="outline"

@@ -24,18 +24,22 @@ class Development implements Preset
             return;
         }
 
-        /** @var string $appUrl */
         $appUrl = config('app.url');
+        $appUrl = is_string($appUrl) && $appUrl !== '' ? $appUrl : 'http://localhost';
 
-        $appDomain = explode('://', $appUrl)[1];
+        $appHost = parse_url($appUrl, PHP_URL_HOST);
+        if (! is_string($appHost) || $appHost === '') {
+            $appHost = 'localhost';
+        }
 
-        $appOrigins = ['https://'.$appDomain.':*'];
+        $appOrigins = ['https://'.$appHost.':*', 'http://'.$appHost.':*'];
         $devOrigins = [...$appOrigins, ...$this->loopbackOrigins('http'), ...$this->loopbackOrigins('https')];
 
         $policy
             ->add(Directive::CONNECT, [
                 ...$devOrigins,
-                'wss://'.$appDomain.':*',
+                'wss://'.$appHost.':*',
+                'ws://'.$appHost.':*',
                 ...$this->loopbackOrigins('ws'),
                 ...$this->loopbackOrigins('wss'),
             ])

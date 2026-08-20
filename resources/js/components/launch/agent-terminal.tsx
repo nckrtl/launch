@@ -1,4 +1,6 @@
 import React from "react";
+import { CornerOrnament, type CornerPosition } from "@/components/launch/corner-brackets";
+import { useBP } from "@/components/launch/grid";
 import { LaunchIcon } from "@/components/launch/icons";
 import { useAppearance } from "@/hooks/use-appearance";
 
@@ -7,20 +9,15 @@ const AT_DEPLOY = "laravel cloud deploy";
 const AT_FRAMES = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
 
 function ATCorner({ at }: { at: string }) {
-    const c = "1px solid var(--accent)";
-    const s: React.CSSProperties = {
-        position: "absolute",
-        width: 5,
-        height: 5,
-        zIndex: 3,
-        pointerEvents: "none",
-    };
-    if (at[0] === "t") Object.assign(s, { top: 0, borderTop: c });
-    else Object.assign(s, { bottom: 0, borderBottom: c });
-    if (at[1] === "l") Object.assign(s, { left: 0, borderLeft: c });
-    else Object.assign(s, { right: 0, borderRight: c });
-    s[`border${at[0] === "t" ? "Top" : "Bottom"}${at[1] === "l" ? "Left" : "Right"}Radius`] = 2;
-    return <span style={s} />;
+    return (
+        <CornerOrnament
+            at={at as CornerPosition}
+            offset={0}
+            size={5}
+            radius={2}
+            color="var(--accent)"
+        />
+    );
 }
 
 function ATMark({ n, show, r = 8 }: { n: number; show: boolean; r?: number }) {
@@ -281,9 +278,15 @@ function ATBottomBar({
                     </div>
                 </div>
             ) : (
-                <div style={{ display: "flex", gap: 8 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                     <span style={{ color: "var(--accent)" }}>❯</span>
-                    <span style={{ color: "var(--foreground)" }}>
+                    <span
+                        style={{
+                            color: "var(--foreground)",
+                            display: "inline-flex",
+                            alignItems: "center",
+                        }}
+                    >
                         {phase.mode === "typing" ? phase.text.slice(0, phase.ch) : ""}
                         {cursor}
                     </span>
@@ -328,7 +331,7 @@ function ATChat({ msgs, cursor }: { msgs: any[]; cursor: React.ReactNode }) {
                                 style={{
                                     display: "flex",
                                     gap: 7,
-                                    alignItems: "baseline",
+                                    alignItems: "center",
                                     fontSize: 12,
                                     color: "var(--foreground)",
                                     margin: "5px 0",
@@ -343,10 +346,11 @@ function ATChat({ msgs, cursor }: { msgs: any[]; cursor: React.ReactNode }) {
                                         background: "var(--accent)",
                                         color: "#ffffff",
                                         fontSize: 9,
+                                        lineHeight: 1,
+                                        fontFamily: "var(--font-mono)",
                                         display: "inline-flex",
                                         alignItems: "center",
                                         justifyContent: "center",
-                                        transform: "translateY(2px)",
                                     }}
                                 >
                                     {m.n}
@@ -385,6 +389,7 @@ function ATChat({ msgs, cursor }: { msgs: any[]; cursor: React.ReactNode }) {
                     borderTop: "1px solid var(--border)",
                     padding: "9px 14px",
                     display: "flex",
+                    alignItems: "center",
                     gap: 8,
                     background: "var(--surface-raised)",
                     backdropFilter: "blur(6px)",
@@ -771,8 +776,32 @@ export function AgentTerminal({ height = 400 }: { height?: number }) {
     const tabRef = React.useRef<any>(null);
 
     React.useEffect(() => {
-        const iv = setInterval(() => setTick((t) => t + 1), 90);
-        return () => clearInterval(iv);
+        let iv: any;
+        const start = () => {
+            if (!iv && document.visibilityState !== "hidden") {
+                iv = setInterval(() => setTick((t) => t + 1), 90);
+            }
+        };
+        const stop = () => {
+            if (iv) {
+                clearInterval(iv);
+                iv = null;
+            }
+        };
+        const onVisibilityChange = () => {
+            if (document.visibilityState === "hidden") {
+                stop();
+            } else {
+                start();
+            }
+        };
+
+        start();
+        document.addEventListener("visibilitychange", onVisibilityChange);
+        return () => {
+            stop();
+            document.removeEventListener("visibilitychange", onVisibilityChange);
+        };
     }, []);
 
     const runScaffold = React.useCallback(() => {
@@ -1015,7 +1044,8 @@ export function AgentTerminal({ height = 400 }: { height?: number }) {
         />
     );
     const inBuild = tab === 1;
-    const mob = typeof window !== "undefined" && window.innerWidth < 760;
+    const bp = useBP();
+    const mob = bp === 0;
     const split = inBuild && !mob;
     const term = tab === 2 ? { hist: histD, phase: phD } : { hist: histS, phase: phS };
     const { resolvedAppearance } = useAppearance();

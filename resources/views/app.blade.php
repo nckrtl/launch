@@ -12,7 +12,8 @@
 
         <link rel="preload" href="{{ Vite::asset('resources/fonts/instrument-sans-variable-latin.woff2') }}" as="font" type="font/woff2" crossorigin>
 
-        <script nonce="{{ Vite::cspNonce() }}">
+        @php($cspNonce = Vite::cspNonce())
+        <script @if($cspNonce) nonce="{{ $cspNonce }}" @endif>
             (function() {
                 var appearance = '{{ $appearance ?? "system" }}';
 
@@ -25,7 +26,7 @@
                 }
             })();
         </script>
-        <style nonce="{{ Vite::cspNonce() }}">
+        <style @if($cspNonce) nonce="{{ $cspNonce }}" @endif>
             html, body {
                 background-color: var(--background);
                 color: var(--foreground);

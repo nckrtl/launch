@@ -10,4 +10,7 @@ pest()->extend(TestCase::class)
     })
     ->in('Feature');
 
+pest()->extend(TestCase::class)
+    ->in('Browser');
+
 expect()->extend('toBeOne', fn () => $this->toBe(1));

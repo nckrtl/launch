@@ -49,6 +49,7 @@
     },
     "autoload-dev": {
         "psr-4": {
+            "Launch\\": "scripts/",
             "Tests\\": "tests/"
         }
     },
@@ -56,16 +57,14 @@
         "setup": "@php setup.php",
         "dev": [
             "Composer\\Config::disableProcessTimeout",
-            "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74\" \"php artisan serve\" \"php artisan queue:listen --tries=1 --timeout=0\" \"php artisan pail --timeout=0\" \"npm run dev\" --names=server,queue,logs,vite --kill-others"
+            "bunx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74\" \"php artisan serve\" \"php artisan queue:listen --tries=1 --timeout=0\" \"php artisan pail --timeout=0\" \"bun run dev\" --names=server,queue,logs,vite --kill-others"
         ],
-        "test": [
-            "@php artisan config:clear --ansi",
-            "@php vendor/bin/pest --tia"
-        ],
+        "test": "@php scripts/run-pest.php",
+        "test:browser": "@php scripts/run-browser-tests.php",
         "lint": "vendor/bin/pint",
         "analyse": "vendor/bin/phpstan analyse --memory-limit=1G",
         "rector": "vendor/bin/rector",
-        "check": "composer test && composer analyse && vp check",
+        "check": "composer test && composer analyse && vp check && composer test:browser",
         "fix": "composer rector && composer lint && vp check --fix",
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",

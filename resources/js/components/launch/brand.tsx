@@ -1,5 +1,6 @@
 import React from "react";
 import { cn } from "@/lib/utils";
+import { CornerBrackets } from "@/components/launch/corner-brackets";
 import { LaunchIcon } from "@/components/launch/icons";
 
 export const MARK_PATH =
@@ -75,7 +76,7 @@ export function Logo({ variant = "full", height = 24, className, style, ...props
 }
 
 const TILE_STRIPE = `url("data:image/svg+xml,${encodeURIComponent(
-    "<svg xmlns='http://www.w3.org/2000/svg' width='4' height='4'><path d='M-1,1 l2,-2 M0,4 l4,-4 M3,5 l2,-2' stroke='rgba(251,59,0,0.1)' stroke-width='1'/></svg>",
+    "<svg xmlns='http://www.w3.org/2000/svg' width='4' height='4'><path d='M-1,1 l2,-2 M0,4 l4,-4 M3,5 l2,-2' stroke='rgba(251,59,0,0.08)' stroke-width='1'/></svg>",
 )}")`;
 
 interface IconTileProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -110,23 +111,6 @@ export function IconTile({
     const [hov, setHov] = React.useState(false);
     const on = hov || active;
 
-    const bracket = (at: string) => {
-        const c = `1px solid ${on ? "var(--accent)" : "var(--border-strong)"}`;
-        const s: React.CSSProperties = {
-            position: "absolute",
-            width: 5,
-            height: 5,
-            pointerEvents: "none",
-            transition: "border-color var(--dur-fast) var(--ease-out)",
-        };
-        if (at[0] === "t") Object.assign(s, { top: -1, borderTop: c });
-        else Object.assign(s, { bottom: -1, borderBottom: c });
-        if (at[1] === "l") Object.assign(s, { left: -1, borderLeft: c });
-        else Object.assign(s, { right: -1, borderRight: c });
-        s[`border${at[0] === "t" ? "Top" : "Bottom"}${at[1] === "l" ? "Left" : "Right"}Radius`] = 2;
-        return <span key={at} style={s} />;
-    };
-
     return (
         <div
             onMouseEnter={() => setHov(true)}
@@ -137,7 +121,7 @@ export function IconTile({
                 width: box,
                 height: box,
                 borderRadius: 2,
-                border: `1px solid ${on ? "rgba(251,59,0,.2)" : "var(--grid-line)"}`,
+                border: `1px solid ${on ? "var(--accent-dim)" : "var(--grid-line)"}`,
                 backgroundColor: "var(--surface-raised)",
                 backgroundImage: on ? TILE_STRIPE : "none",
                 boxShadow: glow ? "var(--glow-accent)" : "none",
@@ -152,7 +136,13 @@ export function IconTile({
             }}
             {...props}
         >
-            {corners && ["tl", "tr", "bl", "br"].map(bracket)}
+            <CornerBrackets
+                active={Boolean(corners)}
+                color={on ? "var(--accent)" : "var(--border-strong)"}
+                offset={-1}
+                size={5}
+                radius={2}
+            />
             {icon ||
                 (name ? (
                     <LaunchIcon name={name} size={ic} accent={on ? "duotone" : accent} />

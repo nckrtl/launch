@@ -28,3 +28,12 @@ it('stays out of the way in production', function (): void {
 
     expect(developmentPolicy()->isEmpty())->toBeTrue();
 });
+
+it('does not emit a hostless origin when APP_URL cannot be parsed', function (): void {
+    config(['app.url' => '://']);
+
+    expect(developmentPolicy()->getContents())
+        ->not->toContain('https://:*')
+        ->not->toContain('http://:*')
+        ->toContain('https://localhost:*');
+});

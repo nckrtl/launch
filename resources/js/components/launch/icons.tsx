@@ -101,8 +101,7 @@ export function LaunchIcon({
 }: LaunchIconProps) {
     const inner = ICONS[name] || "";
     const isAccent = Boolean(accent);
-    const accColor =
-        typeof accent === "string" && accent !== "duotone" ? accent : "var(--icon-accent, #FB3B00)";
+    const accColor = typeof accent === "string" && accent !== "duotone" ? accent : "var(--accent)";
 
     const s: React.CSSProperties = {
         flex: "none",
@@ -110,7 +109,7 @@ export function LaunchIcon({
         ...(isAccent
             ? ({
                   "--ic-a": accColor,
-                  ...(accent === "duotone" ? { "--ic-bg": "rgba(251, 59, 0, 0.22)" } : {}),
+                  ...(accent === "duotone" ? { "--ic-bg": "var(--accent-dim)" } : {}),
               } as any)
             : {}),
         ...style,

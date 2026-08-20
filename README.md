@@ -1,6 +1,6 @@
 # Launch Starter Kit
 
-Laravel 13 + Launch Laravel + React 19 + Inertia v3 + VitePlus + Tailwind CSS v4.2 + shadcn
+Laravel 13 + Launch Laravel + React 19 + Inertia v3 + VitePlus + Tailwind CSS v4 + shadcn
 
 ## Getting started
 
@@ -20,6 +20,7 @@ cp .env.example .env
 # Edit .env: set APP_NAME, APP_URL, VITE_APP_URL (e.g. https://my-app.test)
 composer install
 bun install                 # also installs the git hooks
+bunx playwright install chromium   # browser binary for Pest browser tests
 php artisan key:generate
 touch database/database.sqlite
 php artisan migrate --force
@@ -64,15 +65,18 @@ Edit the Markdown files; no rebuild needed.
 ## Development
 
 ```bash
-composer dev    # Starts server, queue, logs, and vite concurrently
+composer dev    # Server, queue, logs, and vite — only when nothing else serves the app
 ```
+
+Under Herd or Orbit the app is already served — skip `composer dev` and follow the
+environment addendum linked above instead.
 
 ## Stack
 
 - **Backend**: Laravel 13, Launch Laravel, PHP 8.4+
-- **Frontend**: React 19, TypeScript 5.9
+- **Frontend**: React 19, TypeScript 7
 - **SPA bridge**: Inertia.js v3 with SSR
-- **Styling**: Tailwind CSS v4.2 with shadcn base-nova style
+- **Styling**: Tailwind CSS v4 with shadcn base-nova style
 - **Components**: shadcn base-nova components backed by Base UI (`@base-ui/react`)
 - **Icons**: Lucide React
 - **Toolchain**: VitePlus (Vite 8 + Oxc linting/formatting)

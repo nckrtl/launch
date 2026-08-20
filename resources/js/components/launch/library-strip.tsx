@@ -178,7 +178,9 @@ export function LibraryStrip() {
                                 >
                                     <div style={{ animation: "libscroll 34s linear infinite" }}>
                                         <LibBento sfx="a" />
-                                        <LibBento sfx="b" />
+                                        <div aria-hidden="true" inert>
+                                            <LibBento sfx="b" />
+                                        </div>
                                     </div>
                                 </div>
                             </div>

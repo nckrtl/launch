@@ -14,7 +14,7 @@ export default function Home() {
             id="top"
             className="min-h-screen bg-background text-foreground antialiased selection:bg-accent selection:text-primary-foreground"
         >
-            <Head title="Launch · Ship your next idea in minutes" />
+            <Head title="Ship your next idea in minutes" />
             <SiteHeader />
             <main>
                 <Hero />

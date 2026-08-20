@@ -21,7 +21,7 @@ class Basic implements Preset
             ->add(Directive::IMG, [Keyword::SELF, 'data:'])
             ->add(Directive::MEDIA, Keyword::SELF)
             ->add(Directive::OBJECT, Keyword::NONE)
-            ->add(Directive::SCRIPT, [Keyword::SELF, Keyword::UNSAFE_EVAL])
+            ->add(Directive::SCRIPT, Keyword::SELF)
             ->add(Directive::STYLE, [Keyword::SELF, Keyword::UNSAFE_INLINE])
             ->addNonce(Directive::SCRIPT);
     }
