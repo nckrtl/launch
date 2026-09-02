@@ -1,11 +1,13 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "nckrtl/launch-starter-kit",
+    "name": "nckrtl/launch",
     "type": "project",
-    "description": "Laravel 13 + React 19 + Inertia v3 starter kit with SSR, Tailwind CSS v4, shadcn on Base UI, and attribute-based routing.",
+    "description": "Marketing and documentation website for Launch.",
     "keywords": [
         "laravel",
-        "starter-kit",
+        "launch",
+        "marketing",
+        "documentation",
         "inertia",
         "react",
         "tailwindcss"
