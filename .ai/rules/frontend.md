@@ -42,19 +42,24 @@ bunx shadcn add @launch/app-sidebar-layout
 Preserve `defineLaunchConfig()` from `@nckrtl/launch-ui/vite`. It integrates
 laravel-vite-plugin, @inertiajs/vite (SSR), @vitejs/plugin-react, @tailwindcss/vite,
 @laravel/vite-plugin-wayfinder and the `typescript:transform` Artisan runner.
-Check installed package guidance before changing options. Supported examples:
+Check installed package guidance before changing options. Supported examples
+for the installed toolchain:
 
 ```ts
 import { defineLaunchConfig } from "@nckrtl/launch-ui/vite";
 export default await defineLaunchConfig({
     i18n: { locale: "nl", fallbackLocale: "en" }, // or true
-    react: { babel: { plugins: ["..."] } },
     wayfinder: { formVariants: true },
     // inertia: false, // deliberately disables Inertia integration
     // plugins: [myPlugin()],
     lint: { options: { typeAware: true } },
 });
 ```
+
+The former `react.babel.plugins` example is obsolete: installed
+`@vitejs/plugin-react` 6.1.1 has no Babel option. Launch forwards React options but
+cannot make unsupported options work; they are ignored. Do not add Babel or other
+dependencies merely to preserve that example.
 
 `VITE_APP_URL` must match the allocated Orbit domain for HTTPS Vite development.
 Do not copy the live website's domain into task-local settings.

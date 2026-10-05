@@ -9,7 +9,7 @@ symlink for Claude Code. `.agents/skills` is the single maintained skill tree;
 `boost.json` selects Claude Code and Codex, guidelines for the installed framework
 and useful directly required packages, and no new skills/cloud integrations.
 Inertia and Wayfinder are auto-detected first-party integrations; `packages` selects
-Launch's third-party guidance (Boost normalizes first-party entries out on refresh). Existing skills contain project adaptations and are
+Launch's third-party guidance. Existing skills contain project adaptations and are
 maintained separately: do not regenerate or remove them on an assumed duplication.
 Review remote skill content before executing any included scripts.
 
@@ -26,20 +26,38 @@ to undo this app's Laravel route files / Wayfinder. Do not run setup commands ju
 to maintain this application. Do not interpret runtime PHP 8.5 in generated guidance
 as a change to the declared PHP 8.4+ requirement.
 
-After Composer updates, `post-update-cmd` runs `scripts/update-agent-context.php`:
+After Composer updates, `post-update-cmd` runs the safe refresh entrypoint. For a
+manual refresh use the same command:
 
 ```bash
-php artisan boost:update --no-discover --ignore-skills --no-interaction
+php scripts/update-agent-context.php
 ```
 
-The wrapper skips production (`COMPOSER_DEV_MODE=0`) or missing Boost. No prompt,
-new package discovery, skill overwrite or MCP rewrite occurs. VitePlus excludes
-Boost-owned `boost.json` and `.ai/package-guidelines.md` from formatting so a refresh
-cannot create formatter drift; hand-maintained rules still run through `vp check`.
-Inspect the diff and
-commit the refreshed guidance alongside relevant dependency updates. To add newly
-useful packages, review their vendor guidance and edit selections deliberately.
-No Boost upgrade is required for this configuration.
+It skips production (`COMPOSER_DEV_MODE=0`) or missing Boost, then composes the
+selected guidance in memory using Boost 2.9's composer API, with rule extraction
+disabled. It does **not** invoke `boost:update` / `boost:install`: their writer can
+swallow errors, truncate guidance and rewrite selections non-atomically. Do not
+use those commands to refresh this project's managed context.
+
+Render failures or incomplete output exit nonzero before publication. The publisher
+writes a same-directory disposable candidate, flushes it, verifies its complete
+contents, then atomically renames it over `.ai/package-guidelines.md`. Write or
+rename failures propagate. Process interruption leaves the old valid file (or the
+complete new file after rename), never a partially published file. A killed process
+may leave an ignored `.ai/.package-guidelines-*` candidate; it can be deleted safely.
+This is process-crash safety on a local filesystem with atomic rename, not a claim
+of multi-file transactions or power-loss durability across filesystems.
+
+No prompt, new package discovery, boost.json rewrite, rule extraction, skill overwrite
+or MCP rewrite occurs. VitePlus excludes the selected `boost.json` and generated
+`.ai/package-guidelines.md` from formatting; hand-maintained rules still run through
+`vp check`. Inspect and commit refreshed guidance with dependency updates. Review
+vendor guidance before deliberately editing selections. No Boost upgrade is required.
+
+Refresh tests boot isolated disposable application fixtures (read-only vendor link),
+including deliberate runtime-version drift, rendering/write/rename failures and
+SIGKILL during writes / before rename. They assert the real checkout stays unchanged;
+`composer test` / `composer check` never refresh its tracked guidance in place.
 
 ## MCP compatibility
 
@@ -69,6 +87,8 @@ live browser integration.
 - Original stack, skills and completion gates: shortened into `AGENTS.md`.
 - Original React/Inertia narrowing, SSR invariants, routes, tokens, Base UI,
   registry, Launch config options and i18n examples: `rules/frontend.md`.
+  The obsolete `react.babel.plugins` option is explicitly annotated as unsupported
+  by installed @vitejs/plugin-react 6.1.1, rather than presented as working.
 - Original directory knowledge, CSP and package-link workflow: `rules/project.md`;
   corrected the nonexistent README section and assumed monorepo path.
 - Original shared CLAUDE arrangement: retained; skills gain a shared Claude link.

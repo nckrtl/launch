@@ -12,6 +12,7 @@
 /.vscode
 /.zed
 /.worktrees
+/.ai/.package-guidelines-*
 /auth.json
 /node_modules
 /bootstrap/ssr

@@ -5,6 +5,8 @@ declare(strict_types=1);
 use Illuminate\Support\Facades\File;
 use Symfony\Component\Process\Process;
 
+require_once __DIR__.'/../Support/AgentContextFixtures.php';
+
 it('shares instructions and skills without agent-specific copies', function (): void {
     expect(readlink(base_path('CLAUDE.md')))->toBe('AGENTS.md')
         ->and(realpath(base_path('.claude/skills')))->toBe(realpath(base_path('.agents/skills')))
@@ -24,22 +26,23 @@ it('refreshes selected package guidance without changing project rules or skills
         ->and(config('boost.agents.claude_code.guidelines_path'))->toBe('.ai/package-guidelines.md')
         ->and(config('boost.agents.codex.guidelines_path'))->toBe('.ai/package-guidelines.md');
 
-    $paths = ['AGENTS.md', 'CLAUDE.md', '.ai/rules/index.md', '.ai/rules/frontend.md', '.ai/rules/project.md'];
-    foreach (File::allFiles(base_path('.agents/skills')) as $file) {
-        $paths[] = '.agents/skills/'.$file->getRelativePathname();
-    }
-    $hashes = array_map(fn (string $path): string => hash_file('sha256', base_path($path)), $paths);
-    $process = new Process([PHP_BINARY, 'scripts/update-agent-context.php'], base_path(), ['COMPOSER_DEV_MODE' => '1', 'APP_ENV' => 'local']);
-    $process->setTimeout(60);
-    $process->mustRun();
+    $checkout = agentContextCheckoutSnapshot();
+    $fixture = agentContextFixture();
+    try {
+        // Force runtime drift regardless of whether this suite runs on PHP 8.4 or 8.5.
+        $path = $fixture.'/.ai/package-guidelines.md';
+        File::put($path, str_replace('running on PHP 8.5', 'running on PHP 0.0', File::get($path)));
+        $protected = agentContextProtectedSnapshot($fixture);
+        $process = new Process([PHP_BINARY, 'scripts/update-agent-context.php'], $fixture, ['COMPOSER_DEV_MODE' => '1', 'APP_ENV' => 'local']);
+        $process->setTimeout(60);
+        $process->mustRun();
 
-    expect(array_map(fn (string $path): string => hash_file('sha256', base_path($path)), $paths))->toBe($hashes)
-        ->and(File::get(base_path('.ai/package-guidelines.md')))->toContain(
-            '<laravel-boost-guidelines>',
-            '=== inertia-laravel/core rules ===',
-            '=== wayfinder/core rules ===',
-            '=== nckrtl/launch-laravel/core rules ===',
-        );
+        expect(File::get($path))->toContain('running on PHP '.PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION)
+            ->and(agentContextProtectedSnapshot($fixture))->toBe($protected)
+            ->and(agentContextCheckoutSnapshot())->toBe($checkout);
+    } finally {
+        File::deleteDirectory($fixture);
+    }
 });
 
 it('skips Boost refresh on production installs', function (): void {
