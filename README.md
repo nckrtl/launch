@@ -40,7 +40,8 @@ composer check  # read-only source validation; required before handoff
 ```
 
 Review the fix diff: automated refactoring is not a substitute for review. The
-check fails on Pint formatting drift, Rector's pending refactors, PHPStan/Larastan
+check first requires Composer and Bun security audits plus Laravel Vet trust, then
+fails on Pint formatting drift, Rector's pending refactors, PHPStan/Larastan
 level 9 findings, or VitePlus format/lint/type findings. It then runs **all** Pest
 Unit, Feature, and Architecture tests with `--no-tia`, followed by the existing
 browser gate. Neither formatting nor refactoring silently changes source in
@@ -60,6 +61,16 @@ owned process even on failure. Browser tests use Pest's disposable loopback app,
 not a managed Orbit URL. Do not bypass the runner or kill an unrelated SSR process
 to free its port. For user-visible UI changes also verify the allocated managed
 app in a real browser, including console errors, and record that evidence.
+
+## Dependency trust
+
+Follow [the dependency policy](docs/dependency-policy.md) for both Composer and
+Bun: routine releases wait seven days; advisory-linked security fixes bypass the
+delay with narrow, temporary exceptions, explicit review and full checks. Commit
+reviewed lockfiles and `vet.json` together. `composer audit:dependencies` runs the
+required audit/trust gate separately. Its current, operator-approved braces
+exception remains an **unresolved high risk**, limited to development tooling and
+expiring on **2026-10-12 at 00:00 UTC**; the policy records scope and removal rules.
 
 ## Test isolation and credentials
 

@@ -36,6 +36,7 @@ it('keeps the canonical quality gate complete and non-mutating', function (): vo
     expect($composer['scripts']['test:full'])->toBe('@php scripts/run-pest.php --no-tia')
         ->and($composer['scripts']['check'])->toBe([
             'Composer\\Config::disableProcessTimeout',
+            '@audit:dependencies',
             '@lint --test',
             '@rector process --dry-run',
             '@analyse',

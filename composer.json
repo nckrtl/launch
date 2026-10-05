@@ -31,6 +31,7 @@
         "laravel/mcp": "^1.0",
         "laravel/pail": "^1.2.5",
         "laravel/pint": "^1.27",
+        "laravel/vet": "^0.2.1",
         "mockery/mockery": "^1.6",
         "nckrtl/laravel-toolbar": "^0.3.6",
         "nckrtl/laravel-toolbar-agentation": "^0.1",
@@ -67,8 +68,14 @@
         "lint": "vendor/bin/pint",
         "analyse": "vendor/bin/phpstan analyse --memory-limit=1G",
         "rector": "vendor/bin/rector",
+        "audit:dependencies": [
+            "@composer audit --locked",
+            "vendor/bin/vet --no-interaction",
+            "bun scripts/audit-js.mjs"
+        ],
         "check": [
             "Composer\\Config::disableProcessTimeout",
+            "@audit:dependencies",
             "@lint --test",
             "@rector process --dry-run",
             "@analyse",
@@ -112,7 +119,8 @@
         "sort-packages": true,
         "allow-plugins": {
             "pestphp/pest-plugin": true,
-            "php-http/discovery": true
+            "php-http/discovery": true,
+            "laravel/vet": true
         }
     },
     "minimum-stability": "stable",
