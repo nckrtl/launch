@@ -40,7 +40,7 @@ are not installed, use command help or the official VitePlus documentation.
 
 - Use `vp run <name>` for custom `package.json` scripts. Built-in commands such
   as `vp build`, `vp test`, and `vp check` are not script aliases.
-- Preserve `defineCraftConfig()` and its Laravel, Inertia, React, Tailwind,
+- Preserve `defineLaunchConfig()` and its Laravel, Inertia, React, Tailwind,
   Wayfinder, and Artisan-runner integration.
 - Do not run `vp migrate`, `vp upgrade`, `vp update`, or `vp implode` unless the
   user explicitly requests that lifecycle change.
