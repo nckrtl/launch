@@ -30,6 +30,23 @@ it('runs Pest through the git-aware runner', function (): void {
         ->and($composer['scripts']['dev'][1] ?? '')->not->toContain('npm run dev');
 });
 
+it('keeps the canonical quality gate complete and non-mutating', function (): void {
+    $composer = json_decode(File::get(base_path('composer.json')), true, flags: JSON_THROW_ON_ERROR);
+
+    expect($composer['scripts']['test:full'])->toBe('@php scripts/run-pest.php --no-tia')
+        ->and($composer['scripts']['check'])->toBe([
+            'Composer\\Config::disableProcessTimeout',
+            '@lint --test',
+            '@rector process --dry-run',
+            '@analyse',
+            'vp check',
+            '@test:full',
+            '@test:browser --no-tia',
+        ])
+        ->and($composer['scripts']['fix'])->toBe(['@rector process', '@lint', 'vp check --fix'])
+        ->and(File::get(base_path('scripts/run-pest.php')))->not->toContain('config:clear');
+});
+
 it('ships a committed git hook that installs itself', function (): void {
     // `vp config` (run by `bun install` via the prepare script) points
     // core.hooksPath at VitePlus's dispatcher, which sources this file. It

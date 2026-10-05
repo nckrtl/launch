@@ -664,7 +664,7 @@ function LangShow() {
 function AnnoDemo() {
     const mob = useBP() === 0;
     const [s, setS] = React.useState({
-        cur: { x: "80%", y: 12 },
+        cur: { x: "80%", y: 12 as number | string },
         m1: false,
         m2: false,
         n: null as any,

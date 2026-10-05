@@ -10,6 +10,7 @@ function agentContextCheckoutSnapshot(): array
 {
     $git = new Process(['git', 'ls-files', '-z'], base_path());
     $git->mustRun();
+
     $paths = explode("\0", trim($git->getOutput(), "\0"));
     $paths[] = 'scripts/AgentContextRefresher.php';
     $paths[] = '.mcp.json';
@@ -18,6 +19,7 @@ function agentContextCheckoutSnapshot(): array
         $absolute = base_path($path);
         $snapshot[$path] = is_link($absolute) ? readlink($absolute) : (is_file($absolute) ? hash_file('sha256', $absolute) : false);
     }
+
     ksort($snapshot);
 
     return $snapshot;
@@ -42,12 +44,15 @@ function agentContextFixture(): string
     foreach (['app', 'config', 'routes', '.ai', '.agents', '.codex'] as $directory) {
         File::copyDirectory(base_path($directory), $root.'/'.$directory);
     }
+
     foreach (['bootstrap/cache', 'scripts', 'storage/framework/cache', 'storage/framework/views', 'storage/logs', '.claude'] as $directory) {
         File::makeDirectory($root.'/'.$directory, 0755, true);
     }
+
     foreach (['composer.json', 'composer.lock', 'package.json', 'vite.config.ts', 'boost.json', 'AGENTS.md', 'bootstrap/app.php', 'bootstrap/providers.php', 'scripts/update-agent-context.php', 'scripts/AgentContextRefresher.php'] as $path) {
         File::copy(base_path($path), $root.'/'.$path);
     }
+
     symlink(base_path('vendor'), $root.'/vendor');
     symlink('AGENTS.md', $root.'/CLAUDE.md');
     symlink('../.agents/skills', $root.'/.claude/skills');
@@ -64,11 +69,13 @@ function agentContextProtectedSnapshot(string $root): array
         $absolute = $root.'/'.$path;
         $snapshot[$path] = is_link($absolute) ? readlink($absolute) : hash_file('sha256', $absolute);
     }
+
     foreach (['.ai/rules', '.agents', '.codex'] as $directory) {
         foreach (File::allFiles($root.'/'.$directory, true) as $file) {
             $snapshot[$directory.'/'.$file->getRelativePathname()] = hash_file('sha256', $file->getPathname());
         }
     }
+
     ksort($snapshot);
 
     return $snapshot;

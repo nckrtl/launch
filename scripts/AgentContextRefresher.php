@@ -33,6 +33,7 @@ class AgentContextRefresher
             if ($written !== $guidelines) {
                 throw new RuntimeException('Agent context candidate failed read-back verification.');
             }
+
             $this->validate($written);
 
             if (! chmod($candidate, 0644)) {
@@ -61,6 +62,7 @@ class AgentContextRefresher
                 if ($bytes === false || $bytes === 0) {
                     throw new RuntimeException('Unable to write complete agent context candidate.');
                 }
+
                 $offset += $bytes;
             }
 

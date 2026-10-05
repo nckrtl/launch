@@ -1,6 +1,6 @@
 <?php
 
-it('renders the launch marketing homepage without javascript errors', function () {
+it('renders the launch marketing homepage without javascript errors', function (): void {
     $page = visit('/');
 
     $page->assertSee('idea')
@@ -9,5 +9,6 @@ it('renders the launch marketing homepage without javascript errors', function (
         ->assertSee('launch-ui')
         ->assertSee('The stack')
         ->assertSee('Give your next idea')
-        ->assertNoJavaScriptErrors();
+        ->assertNoJavaScriptErrors()
+        ->assertNoConsoleLogs();
 });

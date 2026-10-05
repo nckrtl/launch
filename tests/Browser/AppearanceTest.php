@@ -1,6 +1,6 @@
 <?php
 
-it('renders light, dark, and system modes without javascript errors', function () {
+it('renders light, dark, and system modes without javascript errors', function (): void {
     $page = visit('/');
 
     $page->assertSee('Launch your next idea')
@@ -19,21 +19,21 @@ it('renders light, dark, and system modes without javascript errors', function (
         ->assertNoJavaScriptErrors();
 });
 
-it('hydrates and renders without javascript errors when the OS prefers dark mode', function () {
+it('hydrates and renders without javascript errors when the OS prefers dark mode', function (): void {
     $page = visit('/')->inDarkMode();
 
     $page->assertSee('Launch your next idea')
         ->assertNoJavaScriptErrors();
 });
 
-it('hydrates and renders without javascript errors on mobile in dark mode', function () {
+it('hydrates and renders without javascript errors on mobile in dark mode', function (): void {
     $page = visit('/')->on()->mobile()->inDarkMode();
 
     $page->assertSee('Launch your next idea')
         ->assertNoJavaScriptErrors();
 });
 
-it('allows interaction across stack layers and cta prompt without javascript errors', function () {
+it('allows interaction across stack layers and cta prompt without javascript errors', function (): void {
     $page = visit('/');
 
     $page->assertSee('The stack')
@@ -52,7 +52,7 @@ it('allows interaction across stack layers and cta prompt without javascript err
         ->assertSee('Copied instructions to clipboard');
 });
 
-it('supports keyboard arrow navigation on stack tabs and space activation on cta prompt', function () {
+it('supports keyboard arrow navigation on stack tabs and space activation on cta prompt', function (): void {
     $page = visit('/');
 
     $page->assertSee('The stack')
@@ -68,7 +68,7 @@ it('supports keyboard arrow navigation on stack tabs and space activation on cta
         ->assertSee('Copied instructions to clipboard');
 });
 
-it('exposes valid desktop ARIA tablist, tab, and tabpanel relationships with active-only visibility', function () {
+it('exposes valid desktop ARIA tablist, tab, and tabpanel relationships with active-only visibility', function (): void {
     $page = visit('/');
 
     $page->assertSee('The stack')
@@ -105,7 +105,7 @@ it('exposes valid desktop ARIA tablist, tab, and tabpanel relationships with act
         })()', true);
 });
 
-it('removes orphan tabpanels and dangling aria references on mobile', function () {
+it('removes orphan tabpanels and dangling aria references on mobile', function (): void {
     $page = visit('/')->on()->mobile();
 
     $page->assertSee('The stack')

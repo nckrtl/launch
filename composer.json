@@ -62,12 +62,25 @@
             "bunx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74\" \"php artisan serve\" \"php artisan queue:listen --tries=1 --timeout=0\" \"php artisan pail --timeout=0\" \"bun run dev\" --names=server,queue,logs,vite --kill-others"
         ],
         "test": "@php scripts/run-pest.php",
+        "test:full": "@php scripts/run-pest.php --no-tia",
         "test:browser": "@php scripts/run-browser-tests.php",
         "lint": "vendor/bin/pint",
         "analyse": "vendor/bin/phpstan analyse --memory-limit=1G",
         "rector": "vendor/bin/rector",
-        "check": "composer test && composer analyse && vp check && composer test:browser",
-        "fix": "composer rector && composer lint && vp check --fix",
+        "check": [
+            "Composer\\Config::disableProcessTimeout",
+            "@lint --test",
+            "@rector process --dry-run",
+            "@analyse",
+            "vp check",
+            "@test:full",
+            "@test:browser --no-tia"
+        ],
+        "fix": [
+            "@rector process",
+            "@lint",
+            "vp check --fix"
+        ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi"

@@ -74,6 +74,7 @@ it('exposes Boost discovery over the configured stdio MCP protocol', function ()
     $process->setInput($input);
     $process->setTimeout(30);
     $process->mustRun();
+
     $responses = array_map(fn (string $line): array => json_decode($line, true, flags: JSON_THROW_ON_ERROR), explode("\n", trim($process->getOutput())));
 
     expect($responses[0]['result']['protocolVersion'])->toBe('2025-11-25')

@@ -1,6 +1,10 @@
 import React from "react";
 import { LaunchIcon } from "@/components/launch/icons";
-import { Button, type ButtonProps } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
+
+type LaunchNowButtonProps = Omit<React.ComponentProps<typeof Button>, "style"> & {
+    style?: React.CSSProperties;
+};
 
 export function launchNow(): void {
     if (typeof document === "undefined") {
@@ -22,8 +26,8 @@ export function LaunchNowButton({
     style,
     onClick,
     ...props
-}: ButtonProps) {
-    const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+}: LaunchNowButtonProps) {
+    const handleClick: NonNullable<React.ComponentProps<typeof Button>["onClick"]> = (e) => {
         launchNow();
         onClick?.(e);
     };

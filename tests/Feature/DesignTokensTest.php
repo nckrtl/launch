@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-test('glow token explicitly consumes the accent-glow color variable', function () {
+test('glow token explicitly consumes the accent-glow color variable', function (): void {
     $themeCss = file_get_contents(resource_path('css/theme.css'));
     expect($themeCss)->not()->toBeFalse();
 
@@ -10,7 +10,7 @@ test('glow token explicitly consumes the accent-glow color variable', function (
     expect($themeCss)->toMatch('/--glow-accent:\s*0\s+0\s+\d+px\s+var\(--accent-glow\);/');
 });
 
-test('reduced motion styles disable animations and transitions', function () {
+test('reduced motion styles disable animations and transitions', function (): void {
     $themeCss = file_get_contents(resource_path('css/theme.css'));
     expect($themeCss)->not()->toBeFalse();
 
@@ -20,7 +20,7 @@ test('reduced motion styles disable animations and transitions', function () {
         ->toMatch('/@media\s*\(prefers-reduced-motion:\s*reduce\)\s*\{[\s\S]*scroll-behavior:\s*auto\s*!important;/');
 });
 
-test('noscrollbar utility disables scrollbars across browser engines', function () {
+test('noscrollbar utility disables scrollbars across browser engines', function (): void {
     $themeCss = file_get_contents(resource_path('css/theme.css'));
     expect($themeCss)->not()->toBeFalse();
 

@@ -4,9 +4,9 @@ namespace Launch;
 
 use Symfony\Component\Process\Process;
 
-final class PestRunner
+final readonly class PestRunner
 {
-    public function __construct(private readonly string $projectRoot) {}
+    public function __construct(private string $projectRoot) {}
 
     /**
      * @return array<string, string>
@@ -42,7 +42,8 @@ final class PestRunner
     {
         return $this->hasGitBaseline()
             && ! $this->requestsSpecificTests($passthrough)
-            && ! in_array('--tia', $passthrough, true);
+            && ! in_array('--tia', $passthrough, true)
+            && ! in_array('--no-tia', $passthrough, true);
     }
 
     /**

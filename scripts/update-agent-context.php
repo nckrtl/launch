@@ -42,9 +42,9 @@ try {
         throw new RuntimeException('Boost guideline rendering failed: '.implode(', ', $failures->paths()));
     }
 
-    (new AgentContextRefresher($root))->refresh("<laravel-boost-guidelines>\n".$content."\n\n</laravel-boost-guidelines>\n");
+    new AgentContextRefresher($root)->refresh("<laravel-boost-guidelines>\n".$content."\n\n</laravel-boost-guidelines>\n");
     fwrite(STDOUT, "Agent package guidance refreshed safely.\n");
-} catch (Throwable $exception) {
-    fwrite(STDERR, 'Agent context refresh failed: '.$exception->getMessage().PHP_EOL);
+} catch (Throwable $throwable) {
+    fwrite(STDERR, 'Agent context refresh failed: '.$throwable->getMessage().PHP_EOL);
     exit(1);
 }

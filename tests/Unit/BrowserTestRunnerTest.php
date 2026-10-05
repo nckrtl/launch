@@ -93,7 +93,7 @@ final class LaunchBrowserRunnerOnPort extends BrowserTestRunner
     }
 }
 
-it('forces inertia ssr to throw so browser tests cannot silently fall back to csr', function () {
+it('forces inertia ssr to throw so browser tests cannot silently fall back to csr', function (): void {
     $runner = new BrowserTestRunner(dirname(__DIR__, 2));
 
     expect($runner->pestEnvironment())
@@ -103,7 +103,7 @@ it('forces inertia ssr to throw so browser tests cannot silently fall back to cs
         ->and($runner->ssrHealthUrl())->toBe('http://127.0.0.1:13719/health');
 });
 
-it('fails closed with an actionable message when the ssr bundle is missing', function () {
+it('fails closed with an actionable message when the ssr bundle is missing', function (): void {
     $directory = launchBrowserRunnerScratch();
     $runner = new BrowserTestRunner($directory);
 
@@ -129,7 +129,7 @@ it('fails closed with an actionable message when the ssr bundle is missing', fun
                     ->toContain('Build assets first');
             })
             ->and($runner->ssrIsOwnedAndRunning())->toBeFalse()
-            ->and(fn () => $gated->run(build: false))
+            ->and(fn (): int => $gated->run(build: false))
             ->toThrow(function (RuntimeException $exception) use ($gated): void {
                 expect($exception->getMessage())
                     ->toContain($gated->ssrBundle())
@@ -144,7 +144,7 @@ it('fails closed with an actionable message when the ssr bundle is missing', fun
     }
 });
 
-it('starts the built ssr server and stops only the owned process', function () {
+it('starts the built ssr server and stops only the owned process', function (): void {
     $directory = launchBrowserRunnerScratch();
     $port = launchBrowserRunnerFreePort();
     $runner = new LaunchBrowserRunnerOnPort($directory, $port);
@@ -164,7 +164,7 @@ it('starts the built ssr server and stops only the owned process', function () {
     expect($runner->ssrIsOwnedAndRunning())->toBeFalse();
 });
 
-it('cleans up an owned ssr process that exits before becoming healthy', function () {
+it('cleans up an owned ssr process that exits before becoming healthy', function (): void {
     $directory = launchBrowserRunnerScratch();
     $runner = new LaunchBrowserRunnerOnPort($directory, launchBrowserRunnerFreePort());
 
@@ -180,7 +180,7 @@ it('cleans up an owned ssr process that exits before becoming healthy', function
     }
 });
 
-it('stops an owned ssr process even when pest exits non-zero', function () {
+it('stops an owned ssr process even when pest exits non-zero', function (): void {
     $runner = new class(dirname(__DIR__, 2)) extends BrowserTestRunner
     {
         public int $stopCalls = 0;
