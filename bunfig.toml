@@ -1,4 +1,4 @@
 [install]
-# Routine releases must be at least seven days old (seconds).
+# Routine releases wait seven days. Security exceptions require explicit review;
+# see docs/dependency-policy.md. Existing bun.lock entries are not re-resolved.
 minimumReleaseAge = 604800
-minimumReleaseAgeExcludes = []

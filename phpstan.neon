@@ -7,6 +7,4 @@ parameters:
         - app/
         - scripts/PestRunner.php
         - scripts/BrowserTestRunner.php
-        - scripts/AgentContextRefresher.php
-        - scripts/update-agent-context.php
     level: 9

@@ -96,11 +96,10 @@ it('has emails', function (string $email) {
 
 Browser tests run in real browsers for full integration testing:
 
-- Browser tests live in `tests/Browser/` and are not part of `composer test`.
-  Prefer `composer test:browser`: it builds client/SSR assets, starts its owned SSR
-  process, runs Pest and stops the owned process. Direct
-  `vendor/bin/pest tests/Browser` requires an existing build and appropriately owned
-  SSR service. Chromium is separate: `bunx playwright install chromium` (one-time).
+- Browser tests live in `tests/Browser/`. In this kit they are not part of `composer test`;
+  run them with `composer test:browser` (builds assets first) or
+  `vendor/bin/pest tests/Browser` against an existing build. They need the Playwright
+  Chromium binary: `bunx playwright install chromium` (one-time).
 - Use Laravel features like `Event::fake()`, `assertAuthenticated()`, and model factories.
 - Use `RefreshDatabase` for clean state per test.
 - Interact with page: click, type, scroll, select, submit, drag-and-drop, touch gestures.

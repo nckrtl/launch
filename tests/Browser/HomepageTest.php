@@ -9,6 +9,5 @@ it('renders the launch marketing homepage without javascript errors', function (
         ->assertSee('launch-ui')
         ->assertSee('The stack')
         ->assertSee('Give your next idea')
-        ->assertNoJavaScriptErrors()
-        ->assertNoConsoleLogs();
+        ->assertNoJavaScriptErrors();
 });

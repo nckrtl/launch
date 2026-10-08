@@ -1,14 +1,13 @@
 <?php
 
 use App\Providers\ToolbarConfigProvider;
-use Inertia\Testing\AssertableInertia;
 use Inertia\Testing\AssertableInertia as Assert;
 use NckRtl\Toolbar\Toolbar;
 
 it('renders the homepage with the Home inertia component', function (): void {
     $this->get('/')
         ->assertSuccessful()
-        ->assertInertia(fn (Assert $page): AssertableInertia => $page
+        ->assertInertia(fn (Assert $page): Assert => $page
             ->component('Home')
         );
 });

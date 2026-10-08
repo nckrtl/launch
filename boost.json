@@ -1,14 +1,8 @@
 {
-    "agents": [
-        "claude_code",
-        "codex"
-    ],
+    "agents": ["claude_code", "codex"],
     "cloud": false,
-    "guidelines": true,
+    "guidelines": false,
     "mcp": false,
     "nightwatch": false,
-    "packages": [
-        "nckrtl/launch-laravel"
-    ],
     "sail": false
 }

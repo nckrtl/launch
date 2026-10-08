@@ -71,10 +71,10 @@ class BrowserTestRunner
 
         try {
             $this->waitUntilHealthy();
-        } catch (\Throwable $throwable) {
+        } catch (\Throwable $exception) {
             $this->stopSsr();
 
-            throw $throwable;
+            throw $exception;
         }
     }
 

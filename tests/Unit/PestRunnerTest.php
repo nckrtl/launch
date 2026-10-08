@@ -94,10 +94,7 @@ it('enables tia once a git baseline commit exists', function (): void {
 
         expect($runner->hasGitBaseline())->toBeTrue()
             ->and($runner->shouldUseTia())->toBeTrue()
-            ->and($runner->pestArguments())->toContain('--tia')
-            ->and($runner->shouldUseTia(['--no-tia']))->toBeFalse()
-            ->and($runner->pestArguments(['--no-tia']))->not->toContain('--tia')
-            ->and($runner->pestArguments(['--no-tia']))->toContain('--no-tia');
+            ->and($runner->pestArguments())->toContain('--tia');
     } finally {
         launchPestRunnerCleanup($directory);
     }
