@@ -4,15 +4,15 @@ use App\Providers\ToolbarConfigProvider;
 use Inertia\Testing\AssertableInertia as Assert;
 use NckRtl\Toolbar\Toolbar;
 
-it('renders the homepage with the Home inertia component', function () {
+it('renders the homepage with the Home inertia component', function (): void {
     $this->get('/')
         ->assertSuccessful()
-        ->assertInertia(fn (Assert $page) => $page
+        ->assertInertia(fn (Assert $page): Assert => $page
             ->component('Home')
         );
 });
 
-it('keeps Agentation local when no sync server is configured', function () {
+it('keeps Agentation local when no sync server is configured', function (): void {
     // The toolbar, and with it the runtime, stays off in console contexts.
     app(Toolbar::class)->config->enabledInConsole = true;
 

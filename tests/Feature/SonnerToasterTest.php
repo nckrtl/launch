@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\File;
 
-it('provides the shadcn sonner toaster component', function () {
+it('provides the shadcn sonner toaster component', function (): void {
     $toaster = File::get(resource_path('js/components/ui/sonner.tsx'));
 
     expect($toaster)
@@ -16,7 +16,7 @@ it('provides the shadcn sonner toaster component', function () {
         ->toContain('export { Toaster };');
 });
 
-it('does not install a default app layout for the toaster', function () {
+it('does not install a default app layout for the toaster', function (): void {
     $app = File::get(resource_path('js/app.tsx'));
 
     expect($app)

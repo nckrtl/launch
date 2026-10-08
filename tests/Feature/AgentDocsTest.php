@@ -1,24 +1,24 @@
 <?php
 
-it('serves llms.txt as plain text', function () {
+it('serves llms.txt as plain text', function (): void {
     $this->get('/llms.txt')
         ->assertSuccessful()
         ->assertHeader('Content-Type', 'text/plain; charset=utf-8');
 });
 
-it('points agents from llms.txt to the full setup guide', function () {
+it('points agents from llms.txt to the full setup guide', function (): void {
     expect($this->get('/llms.txt')->getContent())
         ->toContain('https://launch.nckrtl.com/create.md');
 });
 
-it('lists every local environment addendum in llms.txt', function () {
+it('lists every local environment addendum in llms.txt', function (): void {
     expect($this->get('/llms.txt')->getContent())
         ->toContain('https://launch.nckrtl.com/herd.md')
         ->toContain('https://launch.nckrtl.com/orbit.md')
         ->toContain('https://launch.nckrtl.com/solo.md');
 });
 
-it('links the conventions document from llms.txt and the end of setup', function () {
+it('links the conventions document from llms.txt and the end of setup', function (): void {
     expect($this->get('/llms.txt')->getContent())
         ->toContain('https://launch.nckrtl.com/conventions.md');
 
@@ -27,7 +27,7 @@ it('links the conventions document from llms.txt and the end of setup', function
         ->toContain('https://launch.nckrtl.com/conventions.md');
 });
 
-it('serves the conventions separately from the setup guide', function () {
+it('serves the conventions separately from the setup guide', function (): void {
     $conventions = $this->get('/conventions.md');
 
     $conventions->assertSuccessful()
@@ -47,13 +47,13 @@ it('serves the conventions separately from the setup guide', function () {
         ->and($setup)->not->toContain('bunx shadcn add');
 });
 
-it('serves the setup guide as markdown', function () {
+it('serves the setup guide as markdown', function (): void {
     $this->get('/create.md')
         ->assertSuccessful()
         ->assertHeader('Content-Type', 'text/markdown; charset=utf-8');
 });
 
-it('includes the non-interactive setup commands in the guide', function () {
+it('includes the non-interactive setup commands in the guide', function (): void {
     $content = $this->get('/create.md')->getContent();
 
     expect($content)
@@ -65,7 +65,7 @@ it('includes the non-interactive setup commands in the guide', function () {
         ->toContain('Do not run `composer setup`');
 });
 
-it('tells agents to install the Playwright Chromium binary', function () {
+it('tells agents to install the Playwright Chromium binary', function (): void {
     // `bun install` brings in the playwright npm package, but the browser binary is a
     // separate download. Browser tests — and so `composer check` — fail without it.
     expect($this->get('/create.md')->getContent())
@@ -75,7 +75,7 @@ it('tells agents to install the Playwright Chromium binary', function () {
         ->toContain('bunx playwright install chromium');
 });
 
-it('makes the guide branch on the detected environment before writing .env', function () {
+it('makes the guide branch on the detected environment before writing .env', function (): void {
     $content = $this->get('/create.md')->getContent();
 
     $detection = strpos($content, 'command -v orbit');
@@ -91,7 +91,7 @@ it('makes the guide branch on the detected environment before writing .env', fun
         ->toContain('https://launch.nckrtl.com/orbit.md');
 });
 
-it('gives agents a parallel plan with an accurate critical path', function () {
+it('gives agents a parallel plan with an accurate critical path', function (): void {
     $content = $this->get('/create.md')->getContent();
 
     expect($content)
@@ -108,12 +108,12 @@ it('gives agents a parallel plan with an accurate critical path', function () {
     expect($plan)->toBeLessThan($firstStep);
 });
 
-it('warns that composer dev never exits', function () {
+it('warns that composer dev never exits', function (): void {
     expect($this->get('/create.md')->getContent())
         ->toContain('It does not exit');
 });
 
-it('serves an addendum per supported environment', function (string $uri, string $mustContain) {
+it('serves an addendum per supported environment', function (string $uri, string $mustContain): void {
     $response = $this->get($uri);
 
     $response->assertSuccessful()
@@ -126,7 +126,7 @@ it('serves an addendum per supported environment', function (string $uri, string
     ['/solo.md', 'mcp__solo__start_all_commands'],
 ]);
 
-it('tells agents to detect Solo from their tool list, not the shell', function () {
+it('tells agents to detect Solo from their tool list, not the shell', function (): void {
     expect($this->get('/solo.md')->getContent())
         ->toContain('mcp__solo__')
         ->toContain('not a shell check');
@@ -134,7 +134,7 @@ it('tells agents to detect Solo from their tool list, not the shell', function (
     expect($this->get('/create.md')->getContent())->toContain('mcp__solo__');
 });
 
-it('ships no solo.yml, leaving it to the setup flow', function () {
+it('ships no solo.yml, leaving it to the setup flow', function (): void {
     // Orbit's runtime units inject VITE_DEV_SERVER_KEY/CERT. A shipped solo.yml
     // declaring those commands would be wrong for every Orbit user, and the kit
     // cannot know which environment it lands in. The agent writes it if needed.
@@ -144,7 +144,7 @@ it('ships no solo.yml, leaving it to the setup flow', function () {
         ->toContain('does not ship a `solo.yml`');
 });
 
-it('gives process ownership to Orbit whenever Orbit is present', function () {
+it('gives process ownership to Orbit whenever Orbit is present', function (): void {
     expect($this->get('/solo.md')->getContent())
         ->toContain('VITE_DEV_SERVER_KEY')
         ->toContain('command -v orbit');
@@ -160,14 +160,14 @@ it('gives process ownership to Orbit whenever Orbit is present', function () {
         ->toContain('no** `solo.yml`');
 });
 
-it('tells both environments not to start a second PHP server', function (string $uri) {
+it('tells both environments not to start a second PHP server', function (string $uri): void {
     expect($this->get($uri)->getContent())
         ->toContain('Do not run')
         ->toContain('php artisan serve')
         ->toContain('composer dev');
 })->with(['/herd.md', '/orbit.md']);
 
-it('does not send agents to the non-existent orbit link command', function () {
+it('does not send agents to the non-existent orbit link command', function (): void {
     foreach (['/create.md', '/herd.md'] as $uri) {
         expect($this->get($uri)->getContent())->not->toContain('orbit link');
     }
@@ -178,7 +178,7 @@ it('does not send agents to the non-existent orbit link command', function () {
         ->toContain('There is no `orbit link` command');
 });
 
-it('advertises the setup guide to agents from the homepage head', function () {
+it('advertises the setup guide to agents from the homepage head', function (): void {
     $this->get('/')
         ->assertSuccessful()
         ->assertSee('rel="alternate" type="text/markdown" href="/create.md"', escape: false);

@@ -38,8 +38,8 @@ class ToolbarConfigProvider extends ServiceProvider
     {
         $toolbarConfig
             ->primaryColor('#F53003', '#FFFFFF')
-            ->layout(function (LayoutConfig $layout) {
-                $group = (new GroupConfig(priority: 20))
+            ->layout(function (LayoutConfig $layout): void {
+                $group = new GroupConfig(priority: 20)
                     ->addTool(new BreakpointIndicatorTool(show_pixels: false))
                     ->section(Section::RIGHT);
 

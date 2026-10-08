@@ -16,7 +16,7 @@ class Development implements Preset
      * absent: CSP host-source syntax has no room for them, and browsers drop
      * the whole source with a console warning.
      */
-    private const LOOPBACK_HOSTS = ['localhost', '127.0.0.1'];
+    private const array LOOPBACK_HOSTS = ['localhost', '127.0.0.1'];
 
     public function configure(Policy $policy): void
     {

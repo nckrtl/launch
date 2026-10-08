@@ -12,7 +12,7 @@ use NckRtl\Toolbar\Enums\Layout\Section;
 it('uses a red primary color with white text', function (): void {
     $toolbarConfig = new ToolbarConfig;
 
-    (new ToolbarConfigProvider($this->app))->update($toolbarConfig);
+    new ToolbarConfigProvider($this->app)->update($toolbarConfig);
 
     expect($toolbarConfig->primaryColor)->toBe('#F53003')
         ->and($toolbarConfig->primaryTextColor)->toBe('#FFFFFF');
@@ -21,7 +21,7 @@ it('uses a red primary color with white text', function (): void {
 it('uses the breakpoint indicator in the right section', function (): void {
     $toolbarConfig = new ToolbarConfig;
 
-    (new ToolbarConfigProvider($this->app))->update($toolbarConfig);
+    new ToolbarConfigProvider($this->app)->update($toolbarConfig);
 
     $rightTools = collect($toolbarConfig->layout->sections[Section::RIGHT->value])
         ->flatMap(fn (GroupConfig $group): array => array_values($group->tools));
@@ -39,7 +39,7 @@ it('uses the breakpoint indicator in the right section', function (): void {
 it('adds Agentation only when the optional addon is installed', function (): void {
     $toolbarConfig = new ToolbarConfig;
 
-    (new ToolbarConfigProvider($this->app))->update($toolbarConfig);
+    new ToolbarConfigProvider($this->app)->update($toolbarConfig);
 
     $tools = collect($toolbarConfig->layout->sections)
         ->flatten(1)

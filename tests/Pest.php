@@ -3,7 +3,7 @@
 use Tests\TestCase;
 
 pest()->extend(TestCase::class)
-    ->beforeEach(function () {
+    ->beforeEach(function (): void {
         config(['inertia.ssr.enabled' => false]);
 
         $this->withoutVite();

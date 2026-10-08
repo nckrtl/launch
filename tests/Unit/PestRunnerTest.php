@@ -60,7 +60,7 @@ function launchPestRunnerCleanup(string $directory): void
     rmdir($directory);
 }
 
-it('runs the full suite when there is no git repository', function () {
+it('runs the full suite when there is no git repository', function (): void {
     $directory = launchPestRunnerScratch(initializeGit: false, commit: false);
 
     try {
@@ -73,7 +73,7 @@ it('runs the full suite when there is no git repository', function () {
     }
 });
 
-it('runs the full suite after git init but before the first commit', function () {
+it('runs the full suite after git init but before the first commit', function (): void {
     $directory = launchPestRunnerScratch(initializeGit: true, commit: false);
 
     try {
@@ -86,7 +86,7 @@ it('runs the full suite after git init but before the first commit', function ()
     }
 });
 
-it('enables tia once a git baseline commit exists', function () {
+it('enables tia once a git baseline commit exists', function (): void {
     $directory = launchPestRunnerScratch(initializeGit: true, commit: true);
 
     try {
@@ -100,7 +100,7 @@ it('enables tia once a git baseline commit exists', function () {
     }
 });
 
-it('does not auto-add tia when a filter or path is passed', function () {
+it('does not auto-add tia when a filter or path is passed', function (): void {
     $directory = launchPestRunnerScratch(initializeGit: true, commit: true);
 
     try {
@@ -115,7 +115,7 @@ it('does not auto-add tia when a filter or path is passed', function () {
     }
 });
 
-it('creates a git baseline even when global commit.gpgsign is required', function () {
+it('creates a git baseline even when global commit.gpgsign is required', function (): void {
     $evilConfig = sys_get_temp_dir().DIRECTORY_SEPARATOR.'launch-evil-gitconfig-'.bin2hex(random_bytes(4));
     file_put_contents($evilConfig, "[commit]\n\tgpgsign = true\n[user]\n\tsigningkey = 0xDEADBEEF\n[gpg]\n\tprogram = /usr/bin/false\n");
 

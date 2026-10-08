@@ -1,0 +1,8 @@
+{
+    "agents": ["claude_code", "codex"],
+    "cloud": false,
+    "guidelines": false,
+    "mcp": false,
+    "nightwatch": false,
+    "sail": false
+}

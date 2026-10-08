@@ -1,0 +1,4 @@
+# Project-local stdio server; start Codex from this repository root.
+[mcp_servers.laravel-boost]
+command = "php"
+args = ["artisan", "boost:mcp"]
