@@ -38,12 +38,14 @@
     },
     "resolutions": {
         "@vitest/mocker": "4.1.11",
+        "tinypool": "2.1.2",
         "valibot": "1.4.2",
         "vite": "npm:@voidzero-dev/vite-plus-core@0.2.8",
         "vitest": "4.1.11"
     },
     "overrides": {
         "@vitest/mocker": "4.1.11",
+        "tinypool": "2.1.2",
         "valibot": "1.4.2",
         "vite": "npm:@voidzero-dev/vite-plus-core@0.2.8",
         "vitest": "4.1.11"
