@@ -15,7 +15,7 @@ Those settings apply only when a version is resolved. `composer install` and `bu
 
 A known advisory does not wait seven days. Link it in the pull request. If the fixed release is younger than seven days, add only that package to `minimum-release-age-exclude` in `vet.json`, or to `install.minimumReleaseAgeExcludes` in `bunfig.toml`. Remove the exclusion when the release is seven days old. Do not silence an advisory that has no fix. Do not run `audit fix`.
 
-`hardimpactdev/maintainer` v0.1.0 was released on 2026-10-26 at 05:49:59 UTC, so it is excluded from the Composer age check. **Remove `hardimpactdev/maintainer` from `minimum-release-age-exclude` in `vet.json` on 2026-11-02, after 05:49:59 UTC.** Remove the key too if its list is empty. Keep `minimum-release-age: 7`.
+`hardimpactdev/maintainer` v0.1.1 was released on 2026-10-26 at 08:41:57 UTC, so it is excluded from the Composer age check. **Remove `hardimpactdev/maintainer` from `minimum-release-age-exclude` in `vet.json` on 2026-11-02, after 08:41:57 UTC.** Remove the key too if its list is empty. Keep `minimum-release-age: 7`.
 
 ## Commands
 
