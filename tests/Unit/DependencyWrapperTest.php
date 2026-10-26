@@ -2,7 +2,7 @@
 
 use Symfony\Component\Process\Process;
 
-it('runs detect through the maintainer wrapper without changing lockfiles', function () {
+it('runs detect through the maintainer wrapper without changing lockfiles', function (): void {
     $root = dirname(__DIR__, 2);
     $watched = ['composer.json', 'composer.lock', 'package.json', 'bun.lock', 'vet.json', 'bunfig.toml'];
     $before = [];
