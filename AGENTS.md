@@ -191,9 +191,11 @@ its long-running processes are run per environment.
 
 ### SSR
 
-Production SSR is enabled: `bun run build` builds the SSR bundle, and its port
-is pinned to 13719 in `vite.config.ts` (no env override exists — read the
-comment there before changing it). Feature tests deliberately disable SSR and
+Production SSR is enabled: `bun run build` builds the SSR bundle. It reads
+`ORBIT_SSR_PORT` at startup and defaults to 13719 for production. PHP must use
+the matching `INERTIA_SSR_URL`. See README.md for Orbit setup and run
+`node --test tests/ssr-runtime.test.mjs` after building to check SSR isolation.
+Feature tests deliberately disable SSR and
 Vite (`tests/Pest.php` sets `inertia.ssr.enabled=false` and calls
 `withoutVite()`) so they stay deterministic — passing Feature tests therefore
 prove nothing about SSR. Do not "fix" tests by re-enabling SSR in them, and do

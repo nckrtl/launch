@@ -66,7 +66,7 @@
         "lint": "vendor/bin/pint",
         "analyse": "vendor/bin/phpstan analyse --memory-limit=1G",
         "rector": "vendor/bin/rector",
-        "check": "composer test && composer analyse && vp check && composer test:browser",
+        "check": "composer test && composer analyse && vp check && composer test:browser && node --test tests/ssr-runtime.test.mjs",
         "fix": "composer rector && composer lint && vp check --fix",
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
