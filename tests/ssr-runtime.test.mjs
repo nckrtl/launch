@@ -4,6 +4,31 @@ import { once } from "node:events";
 import { createServer } from "node:net";
 import { setTimeout } from "node:timers/promises";
 import test from "node:test";
+import { loadConfigFromFile } from "vite-plus";
+
+await test("development keeps one Inertia plugin and PHP prop reloads", async () => {
+    const loaded = await loadConfigFromFile(
+        { command: "serve", mode: "development" },
+        "vite.config.ts",
+    );
+    assert.ok(loaded);
+    const plugins = loaded.config.plugins.flat(Infinity).filter(Boolean);
+    assert.equal(plugins.filter((plugin) => plugin.name === "@inertiajs/vite").length, 1);
+
+    const phpReload = plugins.find((plugin) => plugin.name === "launch:php-reload");
+    assert.ok(phpReload);
+    const transformed = phpReload.transform("export {}", "/resources/js/app.tsx");
+    assert.match(transformed.code, /__launchRouter\.reload\(\)/);
+
+    const events = [];
+    phpReload.hotUpdate.call(
+        { environment: { name: "client", hot: { send: (event) => events.push(event) } } },
+        { file: "/app/Http/Controllers/HomeController.php", modules: [] },
+    );
+    assert.equal(events.length, 1);
+    assert.equal(events[0].type, "custom");
+    assert.equal(events[0].event, "launch:php-update");
+});
 
 async function freePort() {
     const socket = createServer();

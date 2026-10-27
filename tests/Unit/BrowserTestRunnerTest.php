@@ -94,13 +94,20 @@ final class LaunchBrowserRunnerOnPort extends BrowserTestRunner
 }
 
 it('forces inertia ssr to throw so browser tests cannot silently fall back to csr', function (): void {
-    $runner = new BrowserTestRunner(dirname(__DIR__, 2));
+    $previous = getenv('ORBIT_SSR_PORT');
+    putenv('ORBIT_SSR_PORT');
 
-    expect($runner->pestEnvironment())
-        ->toHaveKey('INERTIA_SSR_THROW_ON_ERROR', 'true')
-        ->toHaveKey('INERTIA_SSR_ENABLED', 'true')
-        ->and($runner->ssrBundle())->toEndWith('/bootstrap/ssr/app.js')
-        ->and($runner->ssrHealthUrl())->toBe('http://127.0.0.1:13719/health');
+    try {
+        $runner = new BrowserTestRunner(dirname(__DIR__, 2));
+
+        expect($runner->pestEnvironment())
+            ->toHaveKey('INERTIA_SSR_THROW_ON_ERROR', 'true')
+            ->toHaveKey('INERTIA_SSR_ENABLED', 'true')
+            ->and($runner->ssrBundle())->toEndWith('/bootstrap/ssr/app.js')
+            ->and($runner->ssrHealthUrl())->toBe('http://127.0.0.1:13719/health');
+    } finally {
+        putenv($previous === false ? 'ORBIT_SSR_PORT' : 'ORBIT_SSR_PORT='.$previous);
+    }
 });
 
 it('fails closed with an actionable message when the ssr bundle is missing', function (): void {

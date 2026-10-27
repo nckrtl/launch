@@ -1,17 +1,14 @@
-import inertia from "@inertiajs/vite";
+import type { InertiaPluginOptions } from "@inertiajs/vite";
 import { defineLaunchConfig } from "@nckrtl/launch-ui/vite";
 import { defineConfig } from "vite-plus";
 
-const launchConfig = await defineLaunchConfig({
-    lint: { options: { typeAware: true, typeCheck: true } },
-    inertia: false,
-    plugins: [
-        inertia({
-            frameworks: {
-                package: "@inertiajs/react",
-                extensions: [".tsx", ".jsx"],
-                extractDefault: true,
-                ssr: (configureCall) => `
+const inertiaConfig = {
+    ssr: {},
+    frameworks: {
+        package: "@inertiajs/react",
+        extensions: [".tsx", ".jsx"],
+        extractDefault: true,
+        ssr: (configureCall) => `
 import createServer from '@inertiajs/react/server'
 import { renderToString } from 'react-dom/server'
 
@@ -28,9 +25,12 @@ if (import.meta.env.PROD) {
 
 export default renderPage
 `,
-            },
-        }),
-    ],
+    },
+} satisfies InertiaPluginOptions;
+
+const launchConfig = await defineLaunchConfig({
+    lint: { options: { typeAware: true, typeCheck: true } },
+    inertia: inertiaConfig,
 });
 
 export default defineConfig(async (environment) => ({
