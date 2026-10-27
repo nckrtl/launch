@@ -33,7 +33,7 @@ Inertia owns data, navigation, forms, validation, polling, history and SSR. From
 | Fix formatting and upgrades | `composer fix`                                                          |
 | Dependency audits           | `composer audit:dependencies`                                           |
 
-Browser tests need Chromium once: `bunx playwright install chromium`. `composer test` does not run `tests/Browser`. Feature tests disable SSR and Vite on purpose (`tests/Pest.php`): do not re-enable them, and do not count Feature tests as SSR coverage. The SSR port is pinned to 13719 in `vite.config.ts`; read the comment there before you change it. Keep `defineLaunchConfig()` and `createInertiaApp()`.
+Browser tests need Chromium once: `bunx playwright install chromium`. `composer test` does not run `tests/Browser`. Feature tests disable SSR and Vite on purpose (`tests/Pest.php`): do not re-enable them, and do not count Feature tests as SSR coverage. The built SSR server reads `ORBIT_SSR_PORT` at startup and defaults to 13719 outside Orbit. PHP must use the matching `INERTIA_SSR_URL`. Run `node --test tests/ssr-runtime.test.mjs` after building to check two-server isolation. Keep `defineLaunchConfig()` and `createInertiaApp()`.
 
 `bun install` runs `vp config`, which installs the git hook dispatcher. `.vite-hooks/pre-commit` runs `vp staged`. Skip it once with `VP_GIT_HOOKS=0`. Do not set `hook.*` git config keys.
 
