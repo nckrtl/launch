@@ -203,3 +203,31 @@ it('stops an owned ssr process even when pest exits non-zero', function (): void
     expect($runner->run(build: false))->toBe(2)
         ->and($runner->stopCalls)->toBe(1);
 });
+
+it('uses the runtime ssr port for the server and browser environment', function (): void {
+    $previous = getenv('ORBIT_SSR_PORT');
+    putenv('ORBIT_SSR_PORT=14969');
+
+    try {
+        $runner = new BrowserTestRunner(dirname(__DIR__, 2));
+
+        expect($runner->ssrHealthUrl())->toBe('http://127.0.0.1:14969/health')
+            ->and($runner->pestEnvironment())
+            ->toHaveKey('ORBIT_SSR_PORT', '14969')
+            ->toHaveKey('INERTIA_SSR_URL', 'http://127.0.0.1:14969');
+    } finally {
+        putenv($previous === false ? 'ORBIT_SSR_PORT' : 'ORBIT_SSR_PORT='.$previous);
+    }
+});
+
+it('refuses an invalid runtime ssr port before probing a server', function (string $port): void {
+    $previous = getenv('ORBIT_SSR_PORT');
+    putenv('ORBIT_SSR_PORT='.$port);
+
+    try {
+        expect(fn (): string => new BrowserTestRunner(dirname(__DIR__, 2))->ssrHealthUrl())
+            ->toThrow(RuntimeException::class, 'ORBIT_SSR_PORT must be an integer');
+    } finally {
+        putenv($previous === false ? 'ORBIT_SSR_PORT' : 'ORBIT_SSR_PORT='.$previous);
+    }
+})->with(['invalid', '', '0', '65536']);

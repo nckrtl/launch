@@ -21,6 +21,8 @@ class BrowserTestRunner
             ...getenv(),
             'INERTIA_SSR_THROW_ON_ERROR' => 'true',
             'INERTIA_SSR_ENABLED' => 'true',
+            'ORBIT_SSR_PORT' => (string) $this->ssrPort(),
+            'INERTIA_SSR_URL' => 'http://127.0.0.1:'.$this->ssrPort(),
         ];
     }
 
@@ -31,7 +33,16 @@ class BrowserTestRunner
 
     protected function ssrPort(): int
     {
-        return 13719;
+        $configured = getenv('ORBIT_SSR_PORT');
+        $port = filter_var($configured === false ? 13719 : $configured, FILTER_VALIDATE_INT, [
+            'options' => ['min_range' => 1, 'max_range' => 65535],
+        ]);
+
+        if ($port === false) {
+            throw new RuntimeException('ORBIT_SSR_PORT must be an integer between 1 and 65535.');
+        }
+
+        return $port;
     }
 
     public function ssrHealthUrl(): string
@@ -65,7 +76,9 @@ class BrowserTestRunner
 
         $runtime = (new ExecutableFinder)->find('node') ?? 'node';
 
-        $this->ssr = new Process([$runtime, $this->ssrBundle()], $this->projectRoot);
+        $this->ssr = new Process([$runtime, $this->ssrBundle()], $this->projectRoot, [
+            'ORBIT_SSR_PORT' => (string) $this->ssrPort(),
+        ]);
         $this->ssr->setTimeout(null);
         $this->ssr->start();
 

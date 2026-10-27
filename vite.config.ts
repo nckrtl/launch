@@ -1,12 +1,36 @@
+import inertia from "@inertiajs/vite";
 import { defineLaunchConfig } from "@nckrtl/launch-ui/vite";
 import { defineConfig } from "vite-plus";
 
 const launchConfig = await defineLaunchConfig({
-    // The SSR port is baked into bootstrap/ssr/app.js at build time and has no env
-    // override, so it has to be pinned here. 13714-13718 are taken on the main1
-    // production node (13717 is toolbar), hence 13719.
-    inertia: { ssr: { port: 13719 } },
     lint: { options: { typeAware: true, typeCheck: true } },
+    inertia: false,
+    plugins: [
+        inertia({
+            frameworks: {
+                package: "@inertiajs/react",
+                extensions: [".tsx", ".jsx"],
+                extractDefault: true,
+                ssr: (configureCall) => `
+import createServer from '@inertiajs/react/server'
+import { renderToString } from 'react-dom/server'
+
+const render = await ${configureCall}
+const renderPage = (page) => render(page, renderToString)
+
+if (import.meta.env.PROD) {
+    const port = Number(process.env.ORBIT_SSR_PORT ?? 13719)
+    if (!Number.isInteger(port) || port < 1 || port > 65535) {
+        throw new Error('ORBIT_SSR_PORT must be an integer between 1 and 65535.')
+    }
+    createServer(renderPage, { port, host: '127.0.0.1' })
+}
+
+export default renderPage
+`,
+            },
+        }),
+    ],
 });
 
 export default defineConfig(async (environment) => ({

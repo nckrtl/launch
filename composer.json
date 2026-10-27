@@ -84,7 +84,8 @@
             "@analyse",
             "vp check",
             "@test:full",
-            "@test:browser"
+            "@test:browser",
+            "node --test tests/ssr-runtime.test.mjs"
         ],
         "fix": "composer rector && composer lint && vp check --fix",
         "post-autoload-dump": [
